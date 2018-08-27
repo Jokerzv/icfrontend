@@ -91,7 +91,7 @@ const def = [
     icon: Unarchive,
     component: UpgradeToPro
   },
-  { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
+  { redirect: true, path: "/signin", to: "/dashboard", navbarName: "Redirect 2" }
 ];
 
 const sign = [
@@ -110,20 +110,38 @@ const sign = [
     icon: Person,
     component: Signup
   },
-  { redirect: true, path: "/", to: "/signin", navbarName: "Redirect" }
+  { redirect: true, path: "/", to: "/signin", navbarName: "Sign up" }
 ];
-
+localStorage.removeItem("id");
 var dashboardRoutes = sign;
+
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
-//localStorage.removeItem("id");
+
 if(!isEmpty(localStorage.getItem("id"))){
    dashboardRoutes = def;
+
 }else{
    dashboardRoutes = sign;
 }
 
+
+function test() {
+   setInterval(() => {
+
+    console.log(localStorage.getItem("id"));
+
+  }, 3000);
+}
+test();
+//console.log(dashboardRoutes);
+// export default function menu_left(){
+//
+//   return dashboardRoutes;
+// }
+
+//console.log(dashboardRoutes);
 //alert(localStorage.getItem("id"));
 export default dashboardRoutes;

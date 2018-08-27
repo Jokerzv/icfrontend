@@ -19,6 +19,10 @@ import CardAvatar from "components/Card/CardAvatar.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
+import history from '../history/history';
+
+import {withRouter} from 'react-router'
+
 import avatar from "assets/img/faces/marc.jpg";
 
 import { injectGlobal } from "styled-components";
@@ -410,14 +414,49 @@ handleVerif = e => {
         </div>
       );
     }
+    wellcome = (classes) => {
+      return(
+        <div>
+
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={12}>
+              <Card>
+                <CardHeader color="primary">
+                  <h4 className={classes.cardTitleWhite}>Plaese waiting...</h4>
+                  <p className={classes.cardCategoryWhite}>Redirect</p>
+                </CardHeader>
+                <CardBody>
+
+                      <div className={classes.root}>
+
+                            <LinearProgress />
+                              <br />
+                          </div>
+
+
+
+
+                </CardBody>
+
+
+              </Card>
+
+            </GridItem>
+
+          </GridContainer>
+        </div>
+      );
+    }
   render(){
+
   const { classes } = this.props;
   const mode = (this.state.status_u == "signup") ? this.sign_up(classes) :
                (this.state.status_u == "loading") ? this.loading(classes) :
                (this.state.status_u == "verif") ? this.verif(classes) :
                (this.state.status_u == "error_secret") ? this.verif(classes) :
+               (this.state.status_u == "wellcome") ? this.wellcome(classes) :
                this.sign_up(classes);
-
+login();
   //const { name, pass, age } = this.props.user;
  console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
   return (mode);
@@ -432,6 +471,11 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({ select2: select2 }, dispatch);
+}
+
+export function login() {
+  //return { redirect: true,  to: "/" };
+  return history.push('/signin');
 }
 
 //export default withStyles(styles)(Auth);

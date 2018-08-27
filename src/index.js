@@ -13,6 +13,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import reducer from './store';
+import history from './views/history/history';
 
 //import configureStore from './store/configureStore'
 

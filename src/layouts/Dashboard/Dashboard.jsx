@@ -23,6 +23,13 @@ import logo from "assets/img/reactlogo.png";
 import { connect } from 'react-redux'
 
 
+var koko = 0;
+
+
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -33,6 +40,28 @@ class App extends React.Component {
     };
     this.resizeFunction = this.resizeFunction.bind(this);
   }
+
+   test = () => {
+     setTimeout(() => {
+       this.test();
+      console.log("up test");
+
+
+      if(!isEmpty(localStorage.getItem("id"))){
+         this.setState({auth : true});
+
+      }else{
+         this.setState({auth : false});
+      }
+
+
+
+    }, 1000);
+  }
+
+
+
+
   handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
   };
@@ -40,7 +69,7 @@ class App extends React.Component {
     return this.props.location.pathname !== "/maps";
   }
   resizeFunction() {
-    if (window.innerWidth >= 960) {
+    if (window.innerWidth >= 960) { console.log(this.state.mobileOpen);
       this.setState({ mobileOpen: false });
     }
   }
@@ -89,7 +118,13 @@ class App extends React.Component {
       />
     )
   }
+
+
+
   render() {
+    this.test();
+    if(this.state.auth == false){
+
     const switchRoutes = (
       <Switch>
         {dashboardRoutes.map((prop, key) => {
@@ -111,11 +146,20 @@ class App extends React.Component {
     );
     const { classes, ...rest } = this.props;
     //const auth = (this.state.auth === false) ? this.switchRoutes : this.user;
-    const auth2 = (this.state.auth === false) ? this.loginout(...rest) : this.loginok(classes, ...rest);
+    const auth2 = (this.state.auth === false) ? this.loginout(classes, ...rest) : this.loginok(classes, ...rest);
 
   // console.log("newwww ", this.props.menu_left[0].pass);
   //console.log("newwww ", this.props.menu_left[0].pass);
   //const texter = this.props.menu_left[0].pass;
+
+  // function test() {
+  //    setInterval(() => {
+  //      i++;
+  //     console.log(i);
+  //
+  //   }, 1000);
+  // }
+  // test();
 
     return (
       <div className={classes.wrapper}>
@@ -147,7 +191,78 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }else{
+
+    const switchRoutes = (
+      <Switch>
+        {dashboardRoutes.map((prop, key) => {
+          if (prop.redirect)
+            return <Redirect from={prop.path} to={prop.to} key={key} />;
+          return <Route path={prop.path} component={prop.component} key={key} />;
+        })}
+      </Switch>
+    );
+
+    const user = (
+      <Switch>
+        {loginuser.map((prop, key) => {
+          if (prop.redirect)
+            return <Redirect from={prop.path} to={prop.to} key={key} />;
+          return <Route path={prop.path} component={prop.component} key={key} />;
+        })}
+      </Switch>
+    );
+    const { classes, ...rest } = this.props;
+    //const auth = (this.state.auth === false) ? this.switchRoutes : this.user;
+    const auth2 = (this.state.auth === false) ? this.loginout(classes, ...rest) : this.loginok(classes, ...rest);
+
+  // console.log("newwww ", this.props.menu_left[0].pass);
+  //console.log("newwww ", this.props.menu_left[0].pass);
+  //const texter = this.props.menu_left[0].pass;
+
+  // function test() {
+  //    setInterval(() => {
+  //      i++;
+  //     console.log(i);
+  //
+  //   }, 1000);
+  // }
+  // test();
+
+    return (
+      <div className={classes.wrapper}>
+      <Sidebar
+        routes={loginuser}
+        logoText={"home-expenses"}
+        logo={logo}
+        image={image}
+        handleDrawerToggle={this.handleDrawerToggle}
+        open={this.state.mobileOpen}
+        color="blue"
+        {...rest}
+      />
+        <div className={classes.mainPanel} ref="mainPanel">
+          <Header
+            routes={dashboardRoutes}
+            handleDrawerToggle={this.handleDrawerToggle}
+            {...rest}
+          />
+          {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
+          {this.getRoute() ? (
+            <div className={classes.content}>
+              <div className={classes.container}>{switchRoutes}</div>
+            </div>
+          ) : (
+            <div className={classes.map}>{switchRoutes}</div>
+          )}
+          {this.getRoute() ? <Footer /> : null}
+        </div>
+      </div>
+    );
+
+
   }
+}
 }
 
 App.propTypes = {
