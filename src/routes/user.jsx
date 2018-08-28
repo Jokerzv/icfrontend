@@ -1,6 +1,9 @@
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
+import Set from "@material-ui/icons/SettingsSharp";
+import Assignment from "@material-ui/icons/Assignment";
+
 // import ContentPaste from "@material-ui/icons/ContentPaste";
 import LibraryBooks from "@material-ui/icons/LibraryBooks";
 import BubbleChart from "@material-ui/icons/BubbleChart";
@@ -18,29 +21,30 @@ import Icons from "views/Icons/Icons.jsx";
 import Maps from "views/Maps/Maps.jsx";
 import NotificationsPage from "views/Notifications/Notifications.jsx";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
-
+import Reports from "views/reports/reports.jsx";
+import Config from "views/config/config.jsx";
 
 const user = [
   {
     path: "/dashboard",
-    sidebarName: "Okay",
-    navbarName: "User profile",
+    sidebarName: "Dashboard",
+    navbarName: "Dashboard",
     icon: Dashboard,
     component: DashboardPage
   },
   {
-    path: "/auth",
-    sidebarName: "Sing In",
-    navbarName: "Account",
-    icon: Person,
-    component: Auth
+    path: "/reports",
+    sidebarName: "Reports",
+    navbarName: "Reports",
+    icon: Assignment,
+    component: Reports
   },
   {
-    path: "/signup",
-    sidebarName: "Sing Up",
-    navbarName: "Registration",
+    path: "/config",
+    sidebarName: "Config",
+    navbarName: "Config",
     icon: Person,
-    component: Signup
+    component: Config
   },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];

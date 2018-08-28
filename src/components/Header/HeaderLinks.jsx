@@ -20,10 +20,42 @@ import Button from "components/CustomButtons/Button.jsx";
 
 import headerLinksStyle from "assets/jss/material-dashboard-react/components/headerLinksStyle";
 
+
+var t = 0;
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
+}
+
 class HeaderLinks extends React.Component {
   state = {
-    open: false
+    open: false,
+    auth: false
   };
+
+  test () {
+    if(t == 0){
+     setTimeout(() => {
+
+     //console.log("up test");
+
+
+     if(!isEmpty(sessionStorage.getItem("token"))){
+        this.setState({auth : true});
+        //console.log("123");
+        t = 1;
+
+     }else{
+        this.setState({auth : false});
+     }
+
+this.test();
+
+   }, 1000);
+ }
+
+ }
+
   handleToggle = () => {
     this.setState(state => ({ open: !state.open }));
   };
@@ -36,13 +68,30 @@ class HeaderLinks extends React.Component {
     this.setState({ open: false });
   };
 
+  handleSignin = () =>{
+
+    window.location.replace("/signin");
+  }
+
+  handleSignup = () =>{
+    window.location.replace("/signup");
+  }
+
+handleLogout = () =>{
+  sessionStorage.clear();
+  window.location.replace("/");
+}
+
   render() {
+    this.test();
+    if(this.state.auth == false){
+
     const { classes } = this.props;
     const { open } = this.state;
     return (
       <div>
 
-        <div className={classes.manager}>
+        <div className={classes.manager}> welcome, guest!
           <Button
             buttonRef={node => {
               this.anchorEl = node;
@@ -56,7 +105,7 @@ class HeaderLinks extends React.Component {
             className={classes.buttonLink}
           >
             <Person className={classes.icons} />
-            
+
             <Hidden mdUp implementation="css">
               <p onClick={this.handleClick} className={classes.linkText}>
                 Notification
@@ -87,35 +136,18 @@ class HeaderLinks extends React.Component {
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList role="menu">
                       <MenuItem
-                        onClick={this.handleClose}
+                        onClick={this.handleSignin}
                         className={classes.dropdownItem}
                       >
-                        Mike John responded to your email
+                        Sign in
                       </MenuItem>
                       <MenuItem
-                        onClick={this.handleClose}
+                        onClick={this.handleSignup}
                         className={classes.dropdownItem}
                       >
-                        You have 5 new tasks
+                        Sign up
                       </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        You're now friend with Andrew
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        Another Notification
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        Another One
-                      </MenuItem>
+
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
@@ -126,6 +158,77 @@ class HeaderLinks extends React.Component {
 
       </div>
     );
+
+  }else{
+
+    const { classes } = this.props;
+    const { open } = this.state;
+    return (
+      <div>
+
+        <div className={classes.manager}> {sessionStorage.getItem("email")}!
+          <Button
+            buttonRef={node => {
+              this.anchorEl = node;
+            }}
+            color={window.innerWidth > 959 ? "transparent" : "white"}
+            justIcon={window.innerWidth > 959}
+            simple={!(window.innerWidth > 959)}
+            aria-owns={open ? "menu-list-grow" : null}
+            aria-haspopup="true"
+            onClick={this.handleToggle}
+            className={classes.buttonLink}
+          >
+            <Person className={classes.icons} />
+
+            <Hidden mdUp implementation="css">
+              <p onClick={this.handleClick} className={classes.linkText}>
+                Notification
+              </p>
+            </Hidden>
+          </Button>
+          <Poppers
+            open={open}
+            anchorEl={this.anchorEl}
+            transition
+            disablePortal
+            className={
+              classNames({ [classes.popperClose]: !open }) +
+              " " +
+              classes.pooperNav
+            }
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                id="menu-list-grow"
+                style={{
+                  transformOrigin:
+                    placement === "bottom" ? "center top" : "center bottom"
+                }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={this.handleClose}>
+                    <MenuList role="menu">
+                      <MenuItem
+                        onClick={this.handleLogout}
+                        className={classes.dropdownItem}
+                      >
+                        Sign out
+                      </MenuItem>
+
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Poppers>
+        </div>
+
+      </div>
+    );
+
+  }
   }
 }
 

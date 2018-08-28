@@ -14,8 +14,6 @@ import Unarchive from "@material-ui/icons/Unarchive";
 import DashboardPage from "views/Dashboard/Dashboard.jsx";
 import Auth from "views/Auth/Auth.jsx";
 import Signup from "views/Signup/Signup.jsx";
-import Reports from "views/reports/reports.jsx";
-import Config from "views/config/config.jsx";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
 import TableList from "views/TableList/TableList.jsx";
 import Typography from "views/Typography/Typography.jsx";
@@ -54,13 +52,6 @@ import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
 
 const sign = [
   {
-    path: "/dashboard",
-    sidebarName: "Dashboard",
-    navbarName: "User profile",
-    icon: Dashboard,
-    component: DashboardPage
-  },
-  {
     path: "/signin",
     sidebarName: "Sign in",
     navbarName: "Sign In",
@@ -74,24 +65,9 @@ const sign = [
     icon: Person,
     component: Signup
   },
-  {
-    path: "/reports",
-    sidebarName: "Reports",
-    navbarName: "Reports",
-    icon: Person,
-    component: Reports
-  },
-  {
-    path: "/config",
-    sidebarName: "Config",
-    navbarName: "Config",
-    icon: Person,
-    component: Config
-  },
-  { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
-
+  { redirect: true, path: "/", to: "/signin", navbarName: "Sign up" }
 ];
-//sessionStorage.removeItem("id"); { redirect: true, path: "/", to: "/signin", navbarName: "Sign up" }
+//sessionStorage.removeItem("id");
 
 
 

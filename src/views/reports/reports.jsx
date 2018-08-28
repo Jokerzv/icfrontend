@@ -2,10 +2,10 @@ import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import InputLabel from "@material-ui/core/InputLabel";
+
 // core components
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { select2 } from "../../actions/index";
+
+import { connect } from 'react-redux'
 
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -19,14 +19,12 @@ import CardAvatar from "components/Card/CardAvatar.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
-import history from '../history/history';
-
-import {withRouter} from 'react-router'
-
 import avatar from "assets/img/faces/marc.jpg";
 
 import { injectGlobal } from "styled-components";
 import axios from "axios";
+
+import history from '../history/history';
 
 const styles = {
   cardCategoryWhite: {
@@ -35,11 +33,6 @@ const styles = {
     fontSize: "14px",
     marginTop: "0",
     marginBottom: "0"
-  },
-  root: {
-    flexGrow: 1,
-    width: "100%",
-    height: "20px"
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -52,13 +45,17 @@ const styles = {
   }
 };
 
+const SAMPLE_JSON = {
+"id": 0,
+"email": '',
+"password": '',
+"verify": 0
+}
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
 
-//const LOCALSTORAGE_KEY = './users'
-var er_t = false;
 function validateEmail(email) {
   var pattern  = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return pattern .test(email);
@@ -70,35 +67,75 @@ function validatePass(pass) {
 };
 
 
-class SignUp extends React.Component {
+// function userss(state = [], action) {
+//   if (action.type === 'SING_UP') {
+//     return [
+//       ...state,
+//       action.payload
+//     ];
+//   }
+// return state;
+// }
+
+
+
+
+//const LOCALSTORAGE_KEY = './users'
+
+class Auth extends React.Component {
   constructor (props) {
   super(props)
 
   this.state = {
     email: '',
-    verif: '',
-    secret: '',
+    password: '',
+    errors: '',
     email_p: false,
     pass_p: false,
-    repass_p: false,
-    errors: '',
-    password: '',
-    repassword: '',
     status_u: "signup",
     server: {}
   };
 }
 
+// componentWillMount () {
+//   this.loadJson()
+// }
+//
+// validateJson (json) {
+//   let validJson
+//
+//   try{
+//     validJson = JSON.stringify(JSON.parse(this.state.json), null, 2)
+//   } catch(e) {
+//     throw e
+//   }
+//
+//   return validJson
+// }
 
-
-handleChange = e => this.setState({
-  json: e.target.value
-})
+// loadJson = () => {
+//   const json = window.localStorage.getItem(LOCALSTORAGE_KEY) || JSON.stringify(SAMPLE_JSON, null, 2)
+//   this.setState({ json })
+// }
+//
+// saveJson = () => {
+//   const validJson = this.validateJson(this.state.json)
+//
+//   if (!validJson) return;
+//
+//   window.localStorage.setItem(
+//     LOCALSTORAGE_KEY,
+//     validJson
+//   )
+// }
+//
+// handleChange = e => this.setState({
+//   json: e.target.value
+// })
 
 handleVerifChange = e => {
   this.setState({secret: e.target.value});
   };
-
 
 handleEmailChange = e => {
   this.setState({email: e.target.value});
@@ -109,6 +146,17 @@ handleEmailChange = e => {
     //console.log("email false", e.target.value);
     this.setState({email_p: false});
   }
+  };
+
+  handlePasswordChange = e => {
+    this.setState({password: e.target.value});
+    if(!validatePass(e.target.value)){
+      this.setState({pass_p: true});
+      //console.log("email true", e.target.value);
+    }else{
+      //console.log("email false", e.target.value);
+      this.setState({pass_p: false});
+    }
   };
 
   otventa = res => {
@@ -128,43 +176,78 @@ handleEmailChange = e => {
 
 
    console.log("Получил ",this.state.server);
-  };
+ };
+
+  handleLogin = e => {
+   //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
 
 
-handlePasswordChange = e => {
-  this.setState({password: e.target.value});
-  if(!validatePass(e.target.value)){
-    this.setState({pass_p: true});
-    //console.log("email true", e.target.value);
-  }else{
-    //console.log("email false", e.target.value);
-    this.setState({pass_p: false});
-  }
-};
-handleRepasswordChange = e => {
-  this.setState({repassword: e.target.value});
 
-  if(!validatePass(e.target.value)){
-    this.setState({repass_p: true});
-    //console.log("email true", e.target.value);
-  }else{
-    //console.log("email false", e.target.value);
-    this.setState({repass_p: false});
-  }
-};
+   if(!isEmpty(this.state.email) &&
+     !isEmpty(this.state.password)){
+       this.setState({status_u: "loading"});
+       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
+       axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&pass="+this.state.password+"&status=login")
+         .then(res =>  this.otventa(res.data))
+         .catch(err => console.log(err));
 
- handleLogin = e => {
+       //componentDidMount() {
+         //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
+         //   .then(({ data }) => {
+         //     this.setState({
+         //       products: data
+         // });
+
+
+       //});
+       //  .then(response => response.data)
+       //  .then(this.setState({products: data}))
+       //  .catch(error => console.error(error));
+       // }
+
+
+       // setTimeout(
+       //   function() {
+       //     if(this.state.server.status == "error_login"){
+       //       this.setState({errors: 'Invalid email or password!'});
+       //       //console.log("Ошибка получена ",this.state.server.status);
+       //     }else if(this.state.server.status == "wellcome"){
+       //         sessionStorage.setItem("token", this.state.server.token);
+       //       //console.log("не получил ошибку",this.state.server.status);
+       //     }else{
+       //
+       //     }
+       //     this.setState({status_u: this.state.server.status});
+       //
+       //
+       //     console.log("Получил ",this.state.server);
+       //   }
+       //   .bind(this),
+       //   1000
+       // );
+      //window.localStorage.setItem("email", this.state.email);
+       //window.localStorage.setItem("pass", this.state.password);
+       //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
+
+   }else if(!isEmpty(this.state.email) &&
+     !isEmpty(this.state.password) &&
+     !isEmpty(this.state.repassword) &&
+   this.state.password != this.state.repassword){
+     this.setState({errors: 'Passwords do not match'});
+       console.log("Sing up error password");
+   }else{
+     console.log("Sing up error");
+   }
+ }
+
+ handleVerif = e => {
   //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
 
 
-  if(!isEmpty(this.state.email) &&
-    !isEmpty(this.state.password) &&
-    !isEmpty(this.state.repassword) &&
-  this.state.password == this.state.repassword){
+  if(!isEmpty(this.state.secret)){
+    this.setState({status_u: "loading"});
       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-      this.setState({status_u: "loading"});
-
-      axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&pass="+this.state.password+"&status=signup")
+      axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&secret="+this.state.secret+"&status=verif")
         .then(res => this.otventa(res.data))
         .catch(err => console.log(err));
 
@@ -184,112 +267,33 @@ handleRepasswordChange = e => {
 
       // setTimeout(
       //   function() {
-      //       console.log("Status1 ",this.state.server.status);
-      //     this.setState({status_u: this.state.server.status, secret: this.state.server.secret});
-      //
-      //     if(this.state.server.status == "cancel_email"){
-      //       this.setState({errors: 'Error! Email already registered in the system!'});
+      //     if(this.state.server.status == "error_secret"){
+      //       this.setState({errors: 'Invalid secret code'});
       //       //console.log("Ошибка получена ",this.state.server.status);
-      //     }else if(this.state.server.status == "wellcome"){
-      //         sessionStorage.setItem("token", this.state.server.token);
-      //         console.log("Save token ", this.state.server.token);
-      //         console.log("Token ", sessionStorage.getItem("token"));
-      //       //console.log("не получил ошибку",this.state.server.status);
       //     }else{
-      //
+      //       //console.log("не получил ошибку",this.state.server.status);
       //     }
-      //
+      //     this.setState({status_u: this.state.server.status});
       //
       //
       //     console.log("Получил ",this.state.server);
-      //     console.log("Status ",this.state.server.status);
       //   }
       //   .bind(this),
-      //   1000
+      //   2000
       // );
-      //window.localStorage.setItem("email", this.state.email);
+
       //window.localStorage.setItem("pass", this.state.password);
       //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
-  }else if(!isEmpty(this.state.email) &&
-    !isEmpty(this.state.password) &&
-    !isEmpty(this.state.repassword) &&
-  this.state.password != this.state.repassword){
-    this.setState({errors: 'Passwords do not match'});
-      console.log("Sing up error password");
   }else{
     console.log("Sing up error");
   }
-}
-
-// Verif
-handleVerif = e => {
- //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
-
-
-
-
-
- if(!isEmpty(this.state.secret)){
-     //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-     this.setState({status_u: "loading"});
-     axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&secret="+this.state.secret+"&status=verif")
-       .then(res => this.otventa(res.data))
-       .catch(err => console.log(err));
-
-     //componentDidMount() {
-       //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-       //   .then(({ data }) => {
-       //     this.setState({
-       //       products: data
-       // });
-
-
-     //});
-     //  .then(response => response.data)
-     //  .then(this.setState({products: data}))
-     //  .catch(error => console.error(error));
-     // }
-
-     // setTimeout(
-     //   function() {
-     //       console.log("Status1 ",this.state.server.status);
-     //     this.setState({status_u: this.state.server.status, secret: this.state.server.secret});
-     //
-     //     if(this.state.server.status == "cancel_email"){
-     //       this.setState({errors: 'Error! Email already registered in the system!'});
-     //       //console.log("Ошибка получена ",this.state.server.status);
-     //     }else if(this.state.server.status == "wellcome"){
-     //         sessionStorage.setItem("token", this.state.server.token);
-     //         console.log("Save token ", this.state.server.token);
-     //         console.log("Token ", sessionStorage.getItem("token"));
-     //       //console.log("не получил ошибку",this.state.server.status);
-     //     }else{
-     //
-     //     }
-     //
-     //
-     //
-     //     console.log("Получил ",this.state.server);
-     //     console.log("Status ",this.state.server.status);
-     //   }
-     //   .bind(this),
-     //   1000
-     // );
-     //window.localStorage.setItem("email", this.state.email);
-     //window.localStorage.setItem("pass", this.state.password);
-     //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
-
- }else{
-   console.log("Sing up error");
  }
-}
-
-
- testing(take) {
-     return this.props.select2(take);
- }
+ // testing(take) {
+ //     return this.props.select2(take);
+ // }
     //console.log("Password: " + this.state.password);
+
     verif = (classes) => {
         return(
           <div>
@@ -348,40 +352,39 @@ handleVerif = e => {
         );
 
     }
-    sign_up = (classes) => {
-      return(
-        <div>
+    signin = (classes) => {
+      return (
 
+        <div>
           <GridContainer>
             <GridItem xs={12} sm={12} md={12}>
               <Card>
-                <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Register with Home Expense App</h4>
-                  <p className={classes.cardCategoryWhite}>Please, enter your email and password</p>
+                <CardHeader color="info">
+                  <h4 className={classes.cardTitleWhite}>New expenses</h4>
+                  <p className={classes.cardCategoryWhite}>Please, enter exoenses data here</p>
                 </CardHeader>
                 <CardBody>
-                  {this.state.errors}
+                {this.state.errors}
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={5}>
                       <CustomInput
                         labelText="Email"
                         id="none"
                         name="email"
-                        required
                         error={this.state.email_p}
                         type="email"
                         onChange={this.handleEmailChange}
                         formControlProps={{
                           fullWidth: true
                         }}
-
+                        /*
                         inputProps={{
-                          disabled: false
+                          disabled: true
                         }}
-
+                        */
                       />
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={3}>
+                    <GridItem xs={12} sm={12} md={5}>
                       <CustomInput
                         labelText="Password"
                         id="none"
@@ -394,26 +397,13 @@ handleVerif = e => {
                         }}
                       />
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={3}>
-                      <CustomInput
-                        labelText="Re-password"
-                        id="none"
-                        name="repassword"
-                        error={this.state.repass_p}
-                        onChange={this.handleRepasswordChange}
-                        type="password"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                      />
-                    </GridItem>
                   </GridContainer>
 
 
 
                 </CardBody>
                 <CardFooter>
-                  <Button color="primary" onClick={() => this.handleLogin()}>Sing Up</Button>
+                  <Button color="primary" onClick={() => this.handleLogin()}>Sign In</Button>
 
                 </CardFooter>
 
@@ -424,6 +414,7 @@ handleVerif = e => {
           </GridContainer>
         </div>
       );
+
     }
     loading = (classes) => {
       return(
@@ -434,40 +425,7 @@ handleVerif = e => {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>Plaese waiting...</h4>
-                  <p className={classes.cardCategoryWhite}>Registration</p>
-                </CardHeader>
-                <CardBody>
-
-                      <div className={classes.root}>
-
-                            <LinearProgress />
-                              <br />
-                          </div>
-
-
-
-
-                </CardBody>
-
-
-              </Card>
-
-            </GridItem>
-
-          </GridContainer>
-        </div>
-      );
-    }
-    wellcome = (classes) => {
-      return(
-        <div>
-
-          <GridContainer>
-            <GridItem xs={12} sm={12} md={12}>
-              <Card>
-                <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Plaese waiting...</h4>
-                  <p className={classes.cardCategoryWhite}>Redirect</p>
+                  <p className={classes.cardCategoryWhite}>Sign in</p>
                 </CardHeader>
                 <CardBody>
 
@@ -492,32 +450,36 @@ handleVerif = e => {
       );
     }
   render(){
-
+    //this.props.history.push('/signup');
   const { classes } = this.props;
-  const mode = (this.state.status_u == "signup") ? this.sign_up(classes) :
-               (this.state.status_u == "loading") ? this.loading(classes) :
-               (this.state.status_u == "verif") ? this.verif(classes) :
-               (this.state.status_u == "error_secret") ? this.verif(classes) :
-               (this.state.status_u == "wellcome") ? this.wellcome(classes) :
-               this.sign_up(classes);
-
+const texter = this.props.menu_left[0].pass;
   //const { name, pass, age } = this.props.user;
  //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
+
+
+
+//console.log("my ", this.props.menu_left);
+ //const mode = (this.state.singup) ? this.rendEdit(contact, index) : this.rendNorm(contact, index);
+
+ const mode = (this.state.status_u == "signin") ? this.signin(classes) :
+              (this.state.status_u == "loading") ? this.loading(classes) :
+              (this.state.status_u == "verif") ? this.verif(classes) :
+              this.signin(classes);
+
   return (mode);
 }
-}
-
-function mapStateToProps(state) {
-  return {
-    clients: state.clients_connect_json
-  };
-}
-
-function matchDispatchToProps(dispatch) {
-  return bindActionCreators({ select2: select2 }, dispatch);
 }
 
 
 
 //export default withStyles(styles)(Auth);
-export default withStyles(styles)(connect(mapStateToProps, matchDispatchToProps)(SignUp));
+export default connect(
+  state => ({
+    menu_left: state.menu_left
+  }),
+  dispatch => ({
+    add_login:(value) => dispatch({type: 'OK', payload: value})
+  })
+)(withStyles(styles)(Auth));
+
+//export default withStyles(styles)(connect(mapStateToProps, matchDispatchToProps)(Auth));

@@ -239,54 +239,13 @@ handleEmailChange = e => {
    }
  }
 
- handleVerif = e => {
-  //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
-
-
-  if(!isEmpty(this.state.secret)){
-    this.setState({status_u: "loading"});
+ addcat = e => {
+    //this.setState({status_u: "loading"});
       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-      axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&secret="+this.state.secret+"&status=verif")
+      axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=add")
         .then(res => this.otventa(res.data))
         .catch(err => console.log(err));
 
-      //componentDidMount() {
-        //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-        //   .then(({ data }) => {
-        //     this.setState({
-        //       products: data
-        // });
-
-
-      //});
-      //  .then(response => response.data)
-      //  .then(this.setState({products: data}))
-      //  .catch(error => console.error(error));
-      // }
-
-      // setTimeout(
-      //   function() {
-      //     if(this.state.server.status == "error_secret"){
-      //       this.setState({errors: 'Invalid secret code'});
-      //       //console.log("Ошибка получена ",this.state.server.status);
-      //     }else{
-      //       //console.log("не получил ошибку",this.state.server.status);
-      //     }
-      //     this.setState({status_u: this.state.server.status});
-      //
-      //
-      //     console.log("Получил ",this.state.server);
-      //   }
-      //   .bind(this),
-      //   2000
-      // );
-
-      //window.localStorage.setItem("pass", this.state.password);
-      //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
-
-  }else{
-    console.log("Sing up error");
-  }
  }
  // testing(take) {
  //     return this.props.select2(take);
@@ -359,8 +318,8 @@ handleEmailChange = e => {
             <GridItem xs={12} sm={12} md={12}>
               <Card>
                 <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Sign into Home Expense App</h4>
-                  <p className={classes.cardCategoryWhite}>Please, enter your email and password</p>
+                  <h4 className={classes.cardTitleWhite}>Edit Categories</h4>
+                  <p className={classes.cardCategoryWhite}>Please, confog yor categories</p>
                 </CardHeader>
                 <CardBody>
                 {this.state.errors}
@@ -402,7 +361,7 @@ handleEmailChange = e => {
 
                 </CardBody>
                 <CardFooter>
-                  <Button color="primary" onClick={() => this.handleLogin()}>Sign In</Button>
+                  <Button color="info" onClick={() => this.addcat()}>ADD CATEGORY</Button>
 
                 </CardFooter>
 

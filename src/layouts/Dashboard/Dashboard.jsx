@@ -14,6 +14,7 @@ import Sidebar from "components/Sidebar/Sidebar.jsx";
 
 import dashboardRoutes from "routes/dashboard.jsx";
 import loginuser from "routes/user.jsx";
+import guest from "routes/guest.jsx";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/layouts/dashboardStyle.jsx";
 
@@ -24,7 +25,7 @@ import { connect } from 'react-redux'
 
 
 var koko = 0;
-
+ var t = 0;
 
 
 function isEmpty(str) {
@@ -41,22 +42,27 @@ class App extends React.Component {
     this.resizeFunction = this.resizeFunction.bind(this);
   }
 
-   test = () => {
-     setTimeout(() => {
-       this.test();
-      console.log("up test");
+   test () {
+     if(t == 0){
+      setTimeout(() => {
+
+      //console.log("up test");
 
 
-      if(!isEmpty(localStorage.getItem("id"))){
+      if(!isEmpty(sessionStorage.getItem("token"))){
          this.setState({auth : true});
+         console.log("123");
+         t = 1;
 
       }else{
          this.setState({auth : false});
       }
 
-
+this.test();
 
     }, 1000);
+  }
+
   }
 
 
@@ -127,7 +133,7 @@ class App extends React.Component {
 
     const switchRoutes = (
       <Switch>
-        {dashboardRoutes.map((prop, key) => {
+        {guest.map((prop, key) => {
           if (prop.redirect)
             return <Redirect from={prop.path} to={prop.to} key={key} />;
           return <Route path={prop.path} component={prop.component} key={key} />;
@@ -164,7 +170,7 @@ class App extends React.Component {
     return (
       <div className={classes.wrapper}>
       <Sidebar
-        routes={dashboardRoutes}
+        routes={guest}
         logoText={"home-expenses"}
         logo={logo}
         image={image}
