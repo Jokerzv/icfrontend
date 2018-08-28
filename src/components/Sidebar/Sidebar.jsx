@@ -344,7 +344,7 @@ var Sidebar = ({ ...props }) => {
 
      if(!isEmpty(sessionStorage.getItem("token"))){
         links3 = links2;
-        console.log("zamena!");
+        //console.log("zamena!");
         t = 1;
 
      }else{

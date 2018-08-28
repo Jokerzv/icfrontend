@@ -70,6 +70,7 @@ function validatePass(pass) {
 };
 
 
+
 class SignUp extends React.Component {
   constructor (props) {
   super(props)
@@ -90,6 +91,7 @@ class SignUp extends React.Component {
 }
 
 
+//m = (okey == 1) ? this.props.history.push('/dashboard');
 
 handleChange = e => this.setState({
   json: e.target.value
@@ -110,6 +112,7 @@ handleEmailChange = e => {
     this.setState({email_p: false});
   }
   };
+
 
   otventa = res => {
    this.setState({ server: res })

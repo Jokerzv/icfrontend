@@ -51,7 +51,7 @@ class App extends React.Component {
 
       if(!isEmpty(sessionStorage.getItem("token"))){
          this.setState({auth : true});
-         console.log("123");
+         //console.log("123");
          t = 1;
 
       }else{

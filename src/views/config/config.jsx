@@ -361,7 +361,7 @@ handleEmailChange = e => {
 
                 </CardBody>
                 <CardFooter>
-                  <Button color="info" onClick={() => this.addcat()}>ADD CATEGORY</Button>
+                  <Button color="primary" onClick={() => this.addcat()}>ADD CATEGORY</Button>
 
                 </CardFooter>
 
