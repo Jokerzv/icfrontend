@@ -8,6 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Assignment from "@material-ui/icons/Assignment";
+import { connect } from 'react-redux'
 
 import axios from "axios";
 
@@ -23,7 +24,7 @@ const styles = theme => ({
 class Cat extends React.Component {
 
     otventa = res => {
-      console.log("podnayl");
+
      //this.setState({ server: res, getcat: true})
      //   console.log("получил от странного сервера ", this.state.server);
      // if(this.state.server.status == "error_login"){
@@ -55,6 +56,7 @@ class Cat extends React.Component {
   render() {
       const { classes } = this.props;
     let {options:{title, _id}} = this.props
+    //console.log("Props    ", this.props.menu_left[0].pass);
     return (
       <div>
       <ListItem>
@@ -66,7 +68,7 @@ class Cat extends React.Component {
 
       </Button>
 
-      <Button variant="contained">
+      <Button variant="contained" onClick={() => this.props.cat_up({_id})}>
       <Icon color="primary">
         keyboard_arrow_down
       </Icon>
@@ -97,4 +99,12 @@ class Cat extends React.Component {
   };
 
 
-export default withStyles(styles)(Cat);
+  export default connect(
+    state => ({
+      menu_left: state.menu_left
+    }),
+    dispatch => ({
+      cat_up:(value) => dispatch({type: 'cat_up', payload: value}),
+      add_login:(value) => dispatch({type: 'OK', payload: value})
+    })
+  )(withStyles(styles)(Cat));

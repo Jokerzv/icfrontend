@@ -267,7 +267,7 @@ handleEmailChange = e => {
  // testing(take) {
  //     return this.props.select2(take);
  // }
-    //console.log("Password: " + this.state.password);
+
 
     verif = (classes) => {
         return(
@@ -341,7 +341,7 @@ handleEmailChange = e => {
                 <CardBody>
                 <GridContainer>
               <div>
-                {this.state.server.map(item => <Cat
+                {this.props.menu_left.map(item => <Cat
           options={item}
           key={item._id}
         />)}
@@ -399,13 +399,14 @@ handleEmailChange = e => {
       );
     }
   render(){
+this.props.add_login();
     if(this.state.getcat == false){
-      this.getcat();
+      //this.getcat();
     }
-
+  //console.log("props: ", this.props.menu_left);
     //this.props.history.push('/signup');
   const { classes } = this.props;
-const texter = this.props.menu_left[0].pass;
+//const texter = this.props.menu_left[0].pass;
   //const { name, pass, age } = this.props.user;
  //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
@@ -431,6 +432,7 @@ export default connect(
     menu_left: state.menu_left
   }),
   dispatch => ({
+
     add_login:(value) => dispatch({type: 'OK', payload: value})
   })
 )(withStyles(styles)(Auth));

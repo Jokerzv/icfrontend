@@ -452,7 +452,7 @@ handleEmailChange = e => {
   render(){
     //this.props.history.push('/signup');
   const { classes } = this.props;
-const texter = this.props.menu_left[0].pass;
+//const texter = this.props.menu_left[0].pass;
   //const { name, pass, age } = this.props.user;
  //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
