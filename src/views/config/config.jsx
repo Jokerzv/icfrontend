@@ -25,6 +25,8 @@ import axios from "axios";
 
 import history from '../history/history';
 
+import Cat from "../cat/cat";
+
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -92,7 +94,8 @@ class Auth extends React.Component {
     email_p: false,
     pass_p: false,
     status_u: "signup",
-    server: {}
+    getcat: false,
+    server: []
   };
 }
 
@@ -159,14 +162,15 @@ handleEmailChange = e => {
   };
 
   otventa = res => {
-   this.setState({ server: res })
+   this.setState({ server: res, getcat: true})
+     console.log("получил от странного сервера ", this.state.server);
    if(this.state.server.status == "error_login"){
      this.setState({errors: 'Invalid email or password!'});
      //console.log("Ошибка получена ",this.state.server.status);
    }else if(this.state.server.status == "wellcome"){
-       sessionStorage.setItem("token", this.state.server.token);
-       sessionStorage.setItem("email", this.state.server.email);
-       this.props.history.push('/dashboard');
+       // sessionStorage.setItem("token", this.state.server.token);
+       // sessionStorage.setItem("email", this.state.server.email);
+       // this.props.history.push('/dashboard');
      //console.log("не получил ошибку",this.state.server.status);
    }else{
 
@@ -240,6 +244,7 @@ handleEmailChange = e => {
  }
 
  addcat = e => {
+   console.log("send token ", sessionStorage.getItem("token"));
     //this.setState({status_u: "loading"});
       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=add")
@@ -247,6 +252,18 @@ handleEmailChange = e => {
         .catch(err => console.log(err));
 
  }
+
+ getcat = e => {
+   console.log("send token ", sessionStorage.getItem("token"));
+    //this.setState({status_u: "loading"});
+      //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
+      axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
+        .then(res => this.otventa(res.data))
+        .catch(err => console.log(err));
+
+ }
+
+
  // testing(take) {
  //     return this.props.select2(take);
  // }
@@ -310,7 +327,7 @@ handleEmailChange = e => {
         );
 
     }
-    signin = (classes) => {
+    cat = (classes) => {
       return (
 
         <div>
@@ -322,39 +339,13 @@ handleEmailChange = e => {
                   <p className={classes.cardCategoryWhite}>Please, confog yor categories</p>
                 </CardHeader>
                 <CardBody>
-                {this.state.errors}
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={5}>
-                      <CustomInput
-                        labelText="Email"
-                        id="none"
-                        name="email"
-                        error={this.state.email_p}
-                        type="email"
-                        onChange={this.handleEmailChange}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        /*
-                        inputProps={{
-                          disabled: true
-                        }}
-                        */
-                      />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={5}>
-                      <CustomInput
-                        labelText="Password"
-                        id="none"
-                        name="password"
-                        error={this.state.pass_p}
-                        onChange={this.handlePasswordChange}
-                        type="password"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                      />
-                    </GridItem>
+                <GridContainer>
+              <div>
+                {this.state.server.map(item => <Cat
+          options={item}
+          key={item._id}
+        />)}
+        </div>
                   </GridContainer>
 
 
@@ -408,6 +399,10 @@ handleEmailChange = e => {
       );
     }
   render(){
+    if(this.state.getcat == false){
+      this.getcat();
+    }
+
     //this.props.history.push('/signup');
   const { classes } = this.props;
 const texter = this.props.menu_left[0].pass;
@@ -419,10 +414,10 @@ const texter = this.props.menu_left[0].pass;
 //console.log("my ", this.props.menu_left);
  //const mode = (this.state.singup) ? this.rendEdit(contact, index) : this.rendNorm(contact, index);
 
- const mode = (this.state.status_u == "signin") ? this.signin(classes) :
+ const mode = (this.state.status_u == "cat") ? this.cat(classes) :
               (this.state.status_u == "loading") ? this.loading(classes) :
               (this.state.status_u == "verif") ? this.verif(classes) :
-              this.signin(classes);
+              this.cat(classes);
 
   return (mode);
 }

@@ -164,9 +164,11 @@ handleEmailChange = e => {
      this.setState({errors: 'Invalid email or password!'});
      //console.log("Ошибка получена ",this.state.server.status);
    }else if(this.state.server.status == "wellcome"){
+
        sessionStorage.setItem("token", this.state.server.token);
        sessionStorage.setItem("email", this.state.server.email);
        this.props.history.push('/dashboard');
+
      //console.log("не получил ошибку",this.state.server.status);
    }else{
 

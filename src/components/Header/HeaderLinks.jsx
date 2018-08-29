@@ -40,11 +40,14 @@ class HeaderLinks extends React.Component {
      //console.log("up test");
 
 
-     if(!isEmpty(sessionStorage.getItem("token"))){
+     if(!isEmpty(sessionStorage.getItem("token")) && sessionStorage.getItem("token") != "undefined"){
         this.setState({auth : true});
         //console.log("123");
         t = 1;
 
+     }else if(sessionStorage.getItem("token") == "undefined"){
+       sessionStorage.clear();
+       window.location.replace("/");
      }else{
         this.setState({auth : false});
      }
