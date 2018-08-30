@@ -24,9 +24,9 @@ function otventa (res) {
 export default function menu_left(state=initialState, action){
   if (action.type === "update_cats_2"){
 
-    axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
-      .then(res => {state = res.data; console.log("Получил up_2 ", res.data);})
-      .catch(err => console.log(err));
+    // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
+    //   .then(res => {state = res.data; console.log("Получил up_2 ", res.data);})
+    //   .catch(err => console.log(err));
 
       //console.log(data._id);
       // this.setState({secret: e.target.value});

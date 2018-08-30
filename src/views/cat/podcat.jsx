@@ -17,7 +17,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 
-import Podcat from "./podcat";
+
 
 import axios from "axios";
 
@@ -47,10 +47,8 @@ class Cat extends React.Component {
     open: false,
     open2: false,
     id_cat: '',
-    id_cat2: '',
     title_cat: 'nones',
-    pod_cats: [],
-    cats_now: []
+    pod_cats: []
   };
   }
 
@@ -60,11 +58,6 @@ class Cat extends React.Component {
     //console.log("ID ", data._id, "TITLE ", data.title);
     this.setState({ open: true, id_cat: data._id, title_cat: data.title,});
       //console.log(data);
-
-      axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
-        .then(res => this.get_cats(res.data))
-        .catch(err => console.log(err));
-
   };
 
   handleClose = () => {
@@ -77,16 +70,8 @@ class Cat extends React.Component {
      console.log("Получил ", res);
    };
 
-   get_cats = res => {
-     this.setState({ cats_now: res });
-     var tyn = Object.keys(this.state.cats_now).length;
-     //var tyn = this.state.cats_now._id.length;
-     alert(tyn);
-    console.log("Получил get_cats: ", res);
-  };
-
    please_up = data => {
-     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcatup&catid="+data._id+"&catid2"+this.state.id_cat2)
+     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcatup&catid="+data._id)
        .then(res =>  this.otventa(res.data))
        .catch(err => console.log(err));
 
@@ -133,28 +118,12 @@ class Cat extends React.Component {
       .then(res =>  this.otventa(res.data))
       .catch(err => console.log(err));
         this.setState({ open2: true });
-
   };
 
-
-  getcat = e => {
-    //console.log("send token ", sessionStorage.getItem("token"));
-     //this.setState({status_u: "loading"});
-       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
-         .then(res => this.get_cats(res.data))
-         .catch(err => console.log(err));
-
-  }
-
-
   render() {
-
-    //console.log("S ", this.state.title_cat);
+    console.log("S ", this.state.title_cat);
       const { classes } = this.props;
-    let {options:{title, _id}} = this.props;
-    //let {test: {name}} = this.props;
-    //console.log("view ",this.props.test );
+    let {options:{title, _id}} = this.props
     //console.log("Props    ", this.props.menu_left[0].pass);
     return (
       <div>
@@ -231,12 +200,13 @@ class Cat extends React.Component {
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
             <div>
-              {this.state.pod_cats.map(item => <Podcat
+              {this.state.pod_cats.map(item => <Cat
         options={item}
         key={item._id}
       />)}
       </div>
 
+              You seriously want to delete the {this.state.pod_cats}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

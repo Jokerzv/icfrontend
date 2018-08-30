@@ -90,7 +90,7 @@ class Auth extends React.Component {
  }
 
  getcat = e => {
-   console.log("send token ", sessionStorage.getItem("token"));
+   //console.log("send token ", sessionStorage.getItem("token"));
     //this.setState({status_u: "loading"});
       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
@@ -123,6 +123,7 @@ class Auth extends React.Component {
                 {this.state.server.map(item => <Cat
           options={item}
           key={item._id}
+
         />)}
         </div>
                   </GridContainer>
@@ -146,6 +147,7 @@ class Auth extends React.Component {
     }
 
   render(){
+
     //console.log("update ", this.props.cats.update);
     //this.getcat();
     if(this.props.cats[0].update == 1){
