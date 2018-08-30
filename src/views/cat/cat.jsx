@@ -10,6 +10,14 @@ import Icon from '@material-ui/core/Icon';
 import Assignment from "@material-ui/icons/Assignment";
 import { connect } from 'react-redux'
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+
+
 import axios from "axios";
 
 const styles = theme => ({
@@ -21,7 +29,17 @@ const styles = theme => ({
   },
 });
 
+function Transition(props) {
+  return <Slide direction="up" {...props} />;
+}
+
 class Cat extends React.Component {
+
+  state = {
+      open: false,
+      id_cat: '',
+      title_cat:''
+    };
 
     otventa = res => {
 
@@ -49,9 +67,39 @@ class Cat extends React.Component {
        .then(res =>  this.otventa(res.data))
        .catch(err => console.log(err));
 
+       this.props.cat_up();
      //console.log(data._id);
      // this.setState({secret: e.target.value});
      };
+
+  please_down = data => {
+       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdown&catid="+data._id)
+         .then(res =>  this.otventa(res.data))
+         .catch(err => console.log(err));
+
+         this.props.cat_up();
+       //console.log(data._id);
+       // this.setState({secret: e.target.value});
+       };
+
+  please_delete = data => {
+            axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdelete&catid="+data._id)
+              .then(res =>  this.otventa(res.data))
+              .catch(err => console.log(err));
+
+              this.props.cat_up();
+            //console.log(data._id);
+            // this.setState({secret: e.target.value});
+          };
+
+  handleClickOpen = (id, title) => {
+    this.setState({ open: true });
+
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
   render() {
       const { classes } = this.props;
@@ -68,13 +116,13 @@ class Cat extends React.Component {
 
       </Button>
 
-      <Button variant="contained" onClick={() => this.props.cat_up({_id})}>
+      <Button variant="contained" onClick={() => this.please_down({_id})}>
       <Icon color="primary">
         keyboard_arrow_down
       </Icon>
 
   </Button>
-  <Button variant="contained">
+  <Button variant="contained" onClick={this.handleClickOpen({_id}, {title})}>
   <Icon color="primary">
     clear
   </Icon>
@@ -88,6 +136,32 @@ class Cat extends React.Component {
 </Button>
         </ListItem>
         <Divider />
+
+        <Dialog
+          open={this.state.open}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={this.handleClose}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle id="alert-dialog-slide-title">
+            {"Use Google's location service?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              Do you seriously want to delete the ?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Disagree
+            </Button>
+            <Button onClick={this.handleClose} color="primary">
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
         </div>
     );
   }
@@ -101,10 +175,11 @@ class Cat extends React.Component {
 
   export default connect(
     state => ({
-      menu_left: state.menu_left
+      menu_left: state.menu_left,
+      cats: state.cats
     }),
     dispatch => ({
-      cat_up:(value) => dispatch({type: 'cat_up', payload: value}),
+      cat_up:(value) => dispatch({type: 'update_cats', payload: value}),
       add_login:(value) => dispatch({type: 'OK', payload: value})
     })
   )(withStyles(styles)(Cat));

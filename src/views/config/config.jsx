@@ -53,35 +53,6 @@ const SAMPLE_JSON = {
 "verify": 0
 }
 
-function isEmpty(str) {
-    return (!str || 0 === str.length);
-}
-
-function validateEmail(email) {
-  var pattern  = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return pattern .test(email);
-};
-
-function validatePass(pass) {
-  var pattern  = /^[a-zA-Z0-9]+$/;
-  return pattern .test(pass);
-};
-
-
-// function userss(state = [], action) {
-//   if (action.type === 'SING_UP') {
-//     return [
-//       ...state,
-//       action.payload
-//     ];
-//   }
-// return state;
-// }
-
-
-
-
-//const LOCALSTORAGE_KEY = './users'
 
 class Auth extends React.Component {
   constructor (props) {
@@ -95,153 +66,18 @@ class Auth extends React.Component {
     pass_p: false,
     status_u: "signup",
     getcat: false,
-    server: []
+    server: [],
+    p_update: false
   };
 }
 
-// componentWillMount () {
-//   this.loadJson()
-// }
-//
-// validateJson (json) {
-//   let validJson
-//
-//   try{
-//     validJson = JSON.stringify(JSON.parse(this.state.json), null, 2)
-//   } catch(e) {
-//     throw e
-//   }
-//
-//   return validJson
-// }
-
-// loadJson = () => {
-//   const json = window.localStorage.getItem(LOCALSTORAGE_KEY) || JSON.stringify(SAMPLE_JSON, null, 2)
-//   this.setState({ json })
-// }
-//
-// saveJson = () => {
-//   const validJson = this.validateJson(this.state.json)
-//
-//   if (!validJson) return;
-//
-//   window.localStorage.setItem(
-//     LOCALSTORAGE_KEY,
-//     validJson
-//   )
-// }
-//
-// handleChange = e => this.setState({
-//   json: e.target.value
-// })
-
-handleVerifChange = e => {
-  this.setState({secret: e.target.value});
-  };
-
-handleEmailChange = e => {
-  this.setState({email: e.target.value});
-  if(!validateEmail(e.target.value)){
-    this.setState({email_p: true});
-    //console.log("email true", e.target.value);
-  }else{
-    //console.log("email false", e.target.value);
-    this.setState({email_p: false});
-  }
-  };
-
-  handlePasswordChange = e => {
-    this.setState({password: e.target.value});
-    if(!validatePass(e.target.value)){
-      this.setState({pass_p: true});
-      //console.log("email true", e.target.value);
-    }else{
-      //console.log("email false", e.target.value);
-      this.setState({pass_p: false});
-    }
-  };
 
   otventa = res => {
    this.setState({ server: res, getcat: true})
-     console.log("получил от странного сервера ", this.state.server);
-   if(this.state.server.status == "error_login"){
-     this.setState({errors: 'Invalid email or password!'});
-     //console.log("Ошибка получена ",this.state.server.status);
-   }else if(this.state.server.status == "wellcome"){
-       // sessionStorage.setItem("token", this.state.server.token);
-       // sessionStorage.setItem("email", this.state.server.email);
-       // this.props.history.push('/dashboard');
-     //console.log("не получил ошибку",this.state.server.status);
-   }else{
-
-   }
-   this.setState({status_u: this.state.server.status});
-
-
-   console.log("Получил ",this.state.server);
+    this.props.update_cats_call();
+   //console.log("Получил ",this.state.server);
  };
 
-  handleLogin = e => {
-   //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
-
-
-
-   if(!isEmpty(this.state.email) &&
-     !isEmpty(this.state.password)){
-       this.setState({status_u: "loading"});
-       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-       axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&pass="+this.state.password+"&status=login")
-         .then(res =>  this.otventa(res.data))
-         .catch(err => console.log(err));
-
-       //componentDidMount() {
-         //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-         //   .then(({ data }) => {
-         //     this.setState({
-         //       products: data
-         // });
-
-
-       //});
-       //  .then(response => response.data)
-       //  .then(this.setState({products: data}))
-       //  .catch(error => console.error(error));
-       // }
-
-
-       // setTimeout(
-       //   function() {
-       //     if(this.state.server.status == "error_login"){
-       //       this.setState({errors: 'Invalid email or password!'});
-       //       //console.log("Ошибка получена ",this.state.server.status);
-       //     }else if(this.state.server.status == "wellcome"){
-       //         sessionStorage.setItem("token", this.state.server.token);
-       //       //console.log("не получил ошибку",this.state.server.status);
-       //     }else{
-       //
-       //     }
-       //     this.setState({status_u: this.state.server.status});
-       //
-       //
-       //     console.log("Получил ",this.state.server);
-       //   }
-       //   .bind(this),
-       //   1000
-       // );
-      //window.localStorage.setItem("email", this.state.email);
-       //window.localStorage.setItem("pass", this.state.password);
-       //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
-
-   }else if(!isEmpty(this.state.email) &&
-     !isEmpty(this.state.password) &&
-     !isEmpty(this.state.repassword) &&
-   this.state.password != this.state.repassword){
-     this.setState({errors: 'Passwords do not match'});
-       console.log("Sing up error password");
-   }else{
-     console.log("Sing up error");
-   }
- }
 
  addcat = e => {
    console.log("send token ", sessionStorage.getItem("token"));
@@ -269,64 +105,7 @@ handleEmailChange = e => {
  // }
 
 
-    verif = (classes) => {
-        return(
-          <div>
 
-            <GridContainer>
-              <GridItem xs={12} sm={12} md={12}>
-                <Card>
-                  <CardHeader color="primary">
-                    <h4 className={classes.cardTitleWhite}>Email verification to finish registration with Home Expense App</h4>
-                    <p className={classes.cardCategoryWhite}>Please confirm secret code</p>
-                  </CardHeader>
-                  <CardBody>
-                  {this.state.errors}
-                    <GridContainer>
-                      <GridItem xs={12} sm={12} md={5}>
-                        Your secret code: {this.state.server.secret}
-                      </GridItem>
-                    </GridContainer>
-                    <GridContainer>
-
-                      <GridItem xs={12} sm={12} md={5}>
-                        <CustomInput
-                          labelText="Secret Code"
-                          id="none"
-                          name="code"
-
-                          type="text"
-                          onChange={this.handleVerifChange}
-                          formControlProps={{
-                            fullWidth: true
-                          }}
-                          /*
-                          inputProps={{
-                            disabled: true
-                          }}
-                          */
-                        />
-                      </GridItem>
-
-                    </GridContainer>
-
-
-
-                  </CardBody>
-                  <CardFooter>
-                    <Button color="primary" onClick={() => this.handleVerif()}>Verif</Button>
-
-                  </CardFooter>
-
-                </Card>
-
-              </GridItem>
-
-            </GridContainer>
-          </div>
-        );
-
-    }
     cat = (classes) => {
       return (
 
@@ -341,7 +120,7 @@ handleEmailChange = e => {
                 <CardBody>
                 <GridContainer>
               <div>
-                {this.props.menu_left.map(item => <Cat
+                {this.state.server.map(item => <Cat
           options={item}
           key={item._id}
         />)}
@@ -365,45 +144,39 @@ handleEmailChange = e => {
       );
 
     }
-    loading = (classes) => {
-      return(
-        <div>
 
-          <GridContainer>
-            <GridItem xs={12} sm={12} md={12}>
-              <Card>
-                <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Plaese waiting...</h4>
-                  <p className={classes.cardCategoryWhite}>Sign in</p>
-                </CardHeader>
-                <CardBody>
-
-                      <div className={classes.root}>
-
-                            <LinearProgress />
-                              <br />
-                          </div>
-
-
-
-
-                </CardBody>
-
-
-              </Card>
-
-            </GridItem>
-
-          </GridContainer>
-        </div>
-      );
-    }
   render(){
-this.props.add_login();
-    if(this.state.getcat == false){
-      //this.getcat();
+    //console.log("update ", this.props.cats.update);
+    //this.getcat();
+    if(this.props.cats[0].update == 1){
+      console.log("STATUS UPDATE ", this.props.cats[0].update);
+
+      //this.setState({getcat: false});
+      // console.log("STATUS UPDATE ", this.props.cats[0].update);
+      // console.log("update start CAT");
+      // this.();
+      // console.log("update end CAT");
+      // //this.props.update_cats();
+       this.getcat();
+       //this.setState({getcat: false});
+
+      //this.setState({p_update: true});
+      //console.log("OK");
     }
-  //console.log("props: ", this.props.menu_left);
+
+    // if(this.props.cats.update == 1){
+    //     this.getcat();
+    //   this.props.update_cats();
+    //   this.props.update_cats_cal();
+    // }
+//this.props.add_login();
+    if(this.state.getcat == false){
+      this.getcat();
+      this.setState({getcat: true});
+      //this.props.update_cats();
+      //this.props.update_cats_call();
+    }
+  //console.log("props: ", this.props.cats);
     //this.props.history.push('/signup');
   const { classes } = this.props;
 //const texter = this.props.menu_left[0].pass;
@@ -415,10 +188,7 @@ this.props.add_login();
 //console.log("my ", this.props.menu_left);
  //const mode = (this.state.singup) ? this.rendEdit(contact, index) : this.rendNorm(contact, index);
 
- const mode = (this.state.status_u == "cat") ? this.cat(classes) :
-              (this.state.status_u == "loading") ? this.loading(classes) :
-              (this.state.status_u == "verif") ? this.verif(classes) :
-              this.cat(classes);
+ const mode = this.cat(classes);
 
   return (mode);
 }
@@ -429,11 +199,13 @@ this.props.add_login();
 //export default withStyles(styles)(Auth);
 export default connect(
   state => ({
-    menu_left: state.menu_left
+    menu_left: state.menu_left,
+    cats: state.cats
   }),
   dispatch => ({
 
-    add_login:(value) => dispatch({type: 'OK', payload: value})
+    update_cats:(value) => dispatch({type: 'update_cats', payload: value}),
+    update_cats_call:(value) => dispatch({type: 'update_cats_call', payload: value})
   })
 )(withStyles(styles)(Auth));
 
