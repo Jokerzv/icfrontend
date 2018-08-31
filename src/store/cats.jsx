@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from "axios";
 
 
-var cats = [{update: 0}];
+var cats = [{update: 0}, {update_cats_p: 0}];
 
 // console.log("four ", cats);
 //
@@ -13,15 +13,15 @@ var cats = [{update: 0}];
 //   .catch(err => console.log(err));
 
 
-console.log("new ",cats);
+//console.log("new ",cats);
 export default function menu_left(state=cats, action){
   if (action.type === "update_cats"){
-    cats = [{update: 1}];
-    console.log("updating...", cats);
+    cats = [{update: 1}, {update_cats_p: 1}];
+    //console.log("updating...", cats);
       return cats;
   }else if (action.type === "update_cats_call"){
-    cats = [{update: 0}];
-    console.log("updating...", cats);
+    cats = [{update: 0}, {update_cats_p: 0}];
+    //console.log("updating...", cats);
       return cats;
   }
 

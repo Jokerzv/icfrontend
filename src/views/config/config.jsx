@@ -73,6 +73,7 @@ class Auth extends React.Component {
 
 
   otventa = res => {
+
    this.setState({ server: res, getcat: true})
     this.props.update_cats_call();
    //console.log("Получил ",this.state.server);
@@ -80,13 +81,13 @@ class Auth extends React.Component {
 
 
  addcat = e => {
-   console.log("send token ", sessionStorage.getItem("token"));
+   //console.log("send token ", sessionStorage.getItem("token"));
     //this.setState({status_u: "loading"});
       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=add")
         .then(res => this.otventa(res.data))
         .catch(err => console.log(err));
-
+  this.props.update_cats();
  }
 
  getcat = e => {
@@ -151,7 +152,7 @@ class Auth extends React.Component {
     //console.log("update ", this.props.cats.update);
     //this.getcat();
     if(this.props.cats[0].update == 1){
-      console.log("STATUS UPDATE ", this.props.cats[0].update);
+      //console.log("STATUS UPDATE ", this.props.cats[0].update);
 
       //this.setState({getcat: false});
       // console.log("STATUS UPDATE ", this.props.cats[0].update);

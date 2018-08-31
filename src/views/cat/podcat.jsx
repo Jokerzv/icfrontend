@@ -17,7 +17,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 
-
+import TextField from '@material-ui/core/TextField';
+import classNames from 'classnames';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 import axios from "axios";
 
@@ -30,6 +33,19 @@ function Transition2(props) {
 }
 
 const styles = theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  margin: {
+    margin: theme.spacing.unit,
+  },
+  withoutLabel: {
+    marginTop: theme.spacing.unit * 3,
+  },
+  textField: {
+    flexBasis: 200,
+  },
   button: {
     margin: theme.spacing.unit,
   },
@@ -37,6 +53,22 @@ const styles = theme => ({
     display: 'none',
   },
 });
+
+
+var ranges = [
+  {
+    value: '0-20',
+    label: '0 to 20',
+  },
+  {
+    value: '21-50',
+    label: '21 to 50',
+  },
+  {
+    value: '51-100',
+    label: '51 to 100',
+  },
+];
 
 class Cat extends React.Component {
 
@@ -46,12 +78,36 @@ class Cat extends React.Component {
   this.state = {
     open: false,
     open2: false,
+    update_podcat: false,
     id_cat: '',
     title_cat: 'nones',
-    pod_cats: []
+    pod_cats: [],
+    ranges: [],
+    selected_cat: ''
   };
   }
 
+  // listcats = () => {
+  //
+  //   axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp")
+  //     .then(res =>  this.otventa(res.data))
+  //     .catch(err => console.log(err));
+  //
+  //
+  //     //this.setState({ [prop]: event.target.value });
+  //   };
+
+  handleChange = prop => event => {
+
+    // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp")
+    //   .then(res =>  this.otventa(res.data))
+    //   .catch(err => console.log(err));
+        this.setState({ open: false });
+this.setState({ [prop]: event.target.value });
+      this.setState({ selected_cat: event.target.value });
+      //console.log("Selected CAT now ", event.target.value);
+      //console.log("Selected CAT ", this.state.selected_cat);
+    };
 
 
   handleClickOpen = data => {
@@ -65,30 +121,11 @@ class Cat extends React.Component {
   };
 
     otventa = res => {
-      this.setState({ pod_cats: res });
+      this.setState({ ranges: res });
 
-     console.log("Получил ", res);
+     console.log("Получил rages ", res);
    };
 
-   please_up = data => {
-     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcatup&catid="+data._id)
-       .then(res =>  this.otventa(res.data))
-       .catch(err => console.log(err));
-
-       this.props.cat_up();
-     //console.log(data._id);
-     // this.setState({secret: e.target.value});
-     };
-
-  please_down = data => {
-       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdown&catid="+data._id)
-         .then(res =>  this.otventa(res.data))
-         .catch(err => console.log(err));
-
-         this.props.cat_up();
-       //console.log(data._id);
-       // this.setState({secret: e.target.value});
-       };
 
   please_delete = data => {
             axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdelete&catid="+this.state.id_cat)
@@ -121,40 +158,35 @@ class Cat extends React.Component {
   };
 
   render() {
-    console.log("S ", this.state.title_cat);
+    // if(this.state.update_podcat == false){
+    //   this.listcats();
+    //   this.setState({update_podcat: true});
+    // }
+    //console.log("S ", this.state.title_cat);
       const { classes } = this.props;
     let {options:{title, _id}} = this.props
     //console.log("Props    ", this.props.menu_left[0].pass);
+
+
+
     return (
       <div>
+
       <ListItem>
           <ListItemText primary={title} />
-          <Button variant="contained" onClick={() => this.please_up({_id})}>
-          <Icon color="primary">
-            keyboard_arrow_up
-          </Icon>
 
-      </Button>
 
-      <Button variant="contained" onClick={() => this.please_down({_id})}>
-      <Icon color="primary">
-        keyboard_arrow_down
-      </Icon>
 
-  </Button>
   <Button variant="contained" onClick={() => this.handleClickOpen({_id, title})}>
   <Icon color="primary">
     clear
   </Icon>
 
 </Button>
-<Button variant="contained" onClick={() => this.handleClickOpen_pod({_id, title})}>
-<Icon color="primary">
-  star_rate
-</Icon>
 
-</Button>
         </ListItem>
+
+
         <Divider />
 
         <Dialog
@@ -183,41 +215,6 @@ class Cat extends React.Component {
           </DialogActions>
         </Dialog>
 
-
-
-
-        <Dialog
-          open={this.state.open2}
-          TransitionComponent={Transition2}
-          keepMounted
-          onClose={this.handleClose2}
-          aria-labelledby="alert-dialog-slide-title"
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle id="alert-dialog-slide-title">
-            {"Delete?"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-            <div>
-              {this.state.pod_cats.map(item => <Cat
-        options={item}
-        key={item._id}
-      />)}
-      </div>
-
-              You seriously want to delete the {this.state.pod_cats}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose2} color="primary">
-              No
-            </Button>
-            <Button onClick={() => this.please_delete()} color="primary">
-              Yea!
-            </Button>
-          </DialogActions>
-        </Dialog>
 
         </div>
     );

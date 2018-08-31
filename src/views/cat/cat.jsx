@@ -17,6 +17,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 
+import TextField from '@material-ui/core/TextField';
+import classNames from 'classnames';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputAdornment from '@material-ui/core/InputAdornment';
+
 import Podcat from "./podcat";
 
 import axios from "axios";
@@ -30,6 +35,19 @@ function Transition2(props) {
 }
 
 const styles = theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  margin: {
+    margin: theme.spacing.unit,
+  },
+  withoutLabel: {
+    marginTop: theme.spacing.unit * 3,
+  },
+  textField: {
+    flexBasis: 200,
+  },
   button: {
     margin: theme.spacing.unit,
   },
@@ -38,6 +56,8 @@ const styles = theme => ({
   },
 });
 
+var update = 0;
+var id = 0;
 class Cat extends React.Component {
 
   constructor (props) {
@@ -46,24 +66,78 @@ class Cat extends React.Component {
   this.state = {
     open: false,
     open2: false,
+    update_podcat: false,
     id_cat: '',
     id_cat2: '',
     title_cat: 'nones',
     pod_cats: [],
-    cats_now: []
+    cats_now: [],
+    ranges: [],
+    selected_cat: '',
+    status_find_pocat: 1
   };
   }
 
+  otvet_rages = (res, ids) => {
+
+    //this.setState({ ranges: res });
+
+   //console.log("Получил rages ", res);
+
+  //console.log("YO ID ",  ids);
+   const new_massive =  res.filter((user) => {return user.value != ids;});
+   this.setState({ ranges: new_massive });
+  // console.log(new_massive);
+
+  };
+
+  listcats = data => {
+
+    //console.log("no ID LA", id);
+
+    axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp&catid="+data)
+      .then(res =>  {this.otvet_rages(res.data, data);
 
 
+      })
+      .catch(err => console.log(err));
+
+
+
+
+
+
+      //this.setState({ [prop]: event.target.value });
+    };
+
+  handleChange = prop => event => {
+
+    // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp")
+    //   .then(res =>  this.otventa(res.data))
+    //   .catch(err => console.log(err));
+        this.setState({ open: false });
+        this.setState({ open2: false });
+        this.setState({ [prop]: event.target.value });
+      this.setState({ selected_cat: event.target.value });
+
+      console.log("Selected CAT now ", event.target.value, "CAT ID ", this.props.options._id);
+
+      axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscataddp&selectedcatid="+event.target.value+"&catid="+this.props.options._id)
+        .then(res =>  this.get_cats(res.data))
+        .catch(err => console.log(err));
+      //console.log("Selected CAT ", this.state.selected_cat);
+    };
+// handleClickAddPodCat = data => {
+//   axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscataddp&selectedcatid="+this.state.selected_cat+"&catid="+data._id)
+//     .then(res =>  this.get_cats(res.data))
+//     .catch(err => console.log(err));
+// };
   handleClickOpen = data => {
     //console.log("ID ", data._id, "TITLE ", data.title);
     this.setState({ open: true, id_cat: data._id, title_cat: data.title,});
       //console.log(data);
 
-      axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
-        .then(res => this.get_cats(res.data))
-        .catch(err => console.log(err));
+
 
   };
 
@@ -71,23 +145,20 @@ class Cat extends React.Component {
     this.setState({ open: false });
   };
 
-    otventa = res => {
-      this.setState({ pod_cats: res });
 
-     console.log("Получил ", res);
-   };
 
    get_cats = res => {
      this.setState({ cats_now: res });
-     var tyn = Object.keys(this.state.cats_now).length;
+     this.props.cat_up();
+     //var tyn = Object.keys(this.state.cats_now).length;
      //var tyn = this.state.cats_now._id.length;
-     alert(tyn);
+     //alert(tyn);
     console.log("Получил get_cats: ", res);
   };
 
    please_up = data => {
-     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcatup&catid="+data._id+"&catid2"+this.state.id_cat2)
-       .then(res =>  this.otventa(res.data))
+     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcatup&catid="+data._id)
+       .then(res =>  this.get_cats(res.data))
        .catch(err => console.log(err));
 
        this.props.cat_up();
@@ -97,7 +168,7 @@ class Cat extends React.Component {
 
   please_down = data => {
        axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdown&catid="+data._id)
-         .then(res =>  this.otventa(res.data))
+         .then(res =>  this.get_cats(res.data))
          .catch(err => console.log(err));
 
          this.props.cat_up();
@@ -110,6 +181,7 @@ class Cat extends React.Component {
               .then(res =>  this.otventa(res.data))
               .catch(err => console.log(err));
                 this.setState({ open: false });
+
               this.props.cat_up();
             //console.log(data._id);
             // this.setState({secret: e.target.value});
@@ -127,9 +199,20 @@ class Cat extends React.Component {
     this.setState({ open2: false });
   };
 
+  otventa = res => {
+    this.setState({ pod_cats: res });
+
+   //console.log("Получил подкатегорияы", res);
+
+   if(res == ""){
+     this.setState({status_find_pocat: 0});
+     //console.log(PUSTO);
+   }
+ };
+
   handleClickOpen_pod = data => {
 
-    axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatpod&catid="+this.state.id_cat)
+    axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatpod&catidselected="+data._id)
       .then(res =>  this.otventa(res.data))
       .catch(err => console.log(err));
         this.setState({ open2: true });
@@ -148,14 +231,63 @@ class Cat extends React.Component {
   }
 
 
+  Addponewcat = (id) => {
+    return(
+      <div>
+      <TextField
+          select
+          label="Add categories"
+
+          value={this.state.weightRange}
+          onChange={this.handleChange('weightRange')}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">Categories</InputAdornment>,
+          }}
+        >
+
+          {this.state.ranges.map(option => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        </div>
+    );
+  }
+
+  Addponewcat2 = () => {
+
+    return;
+  }
+
   render() {
 
-    //console.log("S ", this.state.title_cat);
-      const { classes } = this.props;
-    let {options:{title, _id}} = this.props;
-    //let {test: {name}} = this.props;
-    //console.log("view ",this.props.test );
-    //console.log("Props    ", this.props.menu_left[0].pass);
+     const mode = (this.state.status_find_pocat == 0) ? this.Addponewcat(this.props._id) : this.Addponewcat2();
+
+     const { classes } = this.props;
+     let {options:{title, _id}} = this.props;
+
+    if(this.state.update_podcat == false){
+      id = this.props.options._id;
+      this.listcats(this.props.options._id);
+      //console.log("POPESDSD ", this.props.options._id);
+      this.setState({update_podcat: true});
+
+
+    }
+
+
+    // if(this.props.cats[0].update == 1){
+    //   console.log("STATUS UPDATE CATS.JSX ", this.props.cats[0].update);
+    //   this.listcats(this.props.options._id);
+    //
+    // }
+
+
+
+  //const userForRemoveId = this.props.options._id;
+//this.state.pod_cats = this.state.pod_cats.filter((user) => {return user.id !== userForRemoveId;});
     return (
       <div>
       <ListItem>
@@ -226,27 +358,25 @@ class Cat extends React.Component {
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle id="alert-dialog-slide-title">
-            {"Delete?"}
+            {"List subcategory"}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
             <div>
+            {mode}
+
+
               {this.state.pod_cats.map(item => <Podcat
         options={item}
         key={item._id}
       />)}
       </div>
 
+
+
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose2} color="primary">
-              No
-            </Button>
-            <Button onClick={() => this.please_delete()} color="primary">
-              Yea!
-            </Button>
-          </DialogActions>
+
         </Dialog>
 
         </div>
