@@ -1,3 +1,6 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from 'react-redux';
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
@@ -23,34 +26,7 @@ import NotificationsPage from "views/Notifications/Notifications.jsx";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
 
 
-// const user = [
-//   {
-//     path: "/dashboard",
-//     sidebarName: "Dashboard",
-//     navbarName: "User profile",
-//     icon: Dashboard,
-//     component: DashboardPage
-//   },
-//   {
-//     path: "/auth",
-//     sidebarName: "Reports",
-//     navbarName: "Account",
-//     icon: Assignment,
-//     component: Auth
-//   },
-//   {
-//     path: "/signup",
-//     sidebarName: "Config",
-//     navbarName: "Registration",
-//     icon: Set,
-//     component: Signup
-//   },
-//   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
-// ];
-
-//var dashboardRoutes = sign;
-
-const sign = [
+var sign2 = [
   {
     path: "/signin",
     sidebarName: "Sign in",
@@ -68,36 +44,21 @@ const sign = [
   { redirect: true, path: "/", to: "/signin", navbarName: "Sign up" }
 ];
 //sessionStorage.removeItem("id");
+//console.log(sign2);
 
+class sign extends React.Component {
 
-
-// function isEmpty(str) {
-//     return (!str || 0 === str.length);
-// }
-//
-// if(!isEmpty(sessionStorage.getItem("token"))){
-//    dashboardRoutes = user;
-//
-// }else{
-//    dashboardRoutes = sign;
-// }
-
-
-// function test() {
-//    setInterval(() => {
-//
-//     //console.log(localStorage.getItem("id"));
-//
-//   }, 3000);
-// }
-// test();
-//console.log(dashboardRoutes);
-// export default () =>{
-//   dashboardRoutes = sign;
-//   console.log(dashboardRoutes);
-//   return dashboardRoutes;
-// }
-
-//console.log(dashboardRoutes);
-//alert(localStorage.getItem("id"));
-export default sign;
+render(){
+  return (sign2);
+}
+}
+//console.log(sign);
+export default connect(
+  state => ({
+    auth: state.auth
+  }),
+  dispatch => ({
+    //add_login:(value) => dispatch({type: 'SING_UP', payload: value}),
+    auth_send:(value) => dispatch({type: 'auth_true', payload: value})
+  })
+)(sign);

@@ -32,27 +32,25 @@ function Transition2(props) {
   return <Slide direction="up" {...props} />;
 }
 
-const styles = theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
+const styles = {
+  cardCategoryWhite: {
+    color: "rgba(255,255,255,.62)",
+    margin: "0",
+    fontSize: "14px",
+    marginTop: "0",
+    marginBottom: "0"
   },
-  margin: {
-    margin: theme.spacing.unit,
-  },
-  withoutLabel: {
-    marginTop: theme.spacing.unit * 3,
-  },
-  textField: {
-    flexBasis: 200,
-  },
-  button: {
-    margin: theme.spacing.unit,
-  },
-  input: {
-    display: 'none',
-  },
-});
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none"
+  }
+};
+
 
 
 var ranges = [
@@ -70,7 +68,9 @@ var ranges = [
   },
 ];
 
-class Cat extends React.Component {
+
+
+class Podcat extends React.Component {
 
   constructor (props) {
   super(props)
@@ -123,17 +123,20 @@ this.setState({ [prop]: event.target.value });
     otventa = res => {
       this.setState({ ranges: res });
 
-     console.log("Получил rages ", res);
+     //console.log("Получил rages ", res);
    };
 
 
   please_delete = data => {
-            axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdelete&catid="+this.state.id_cat)
+            axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdeletePod&catid="+data._id)
               .then(res =>  this.otventa(res.data))
               .catch(err => console.log(err));
+
                 this.setState({ open: false });
+                this.setState({ open2: false });
               this.props.cat_up();
-            //console.log(data._id);
+            //console.log("DELETE CAT ", this.state.id_cat);
+            this.props.podcat_p();
             // this.setState({secret: e.target.value});
           };
 
@@ -157,27 +160,25 @@ this.setState({ [prop]: event.target.value });
         this.setState({ open2: true });
   };
 
+  // componentDidMount() {
+  //
+  //     }
+  //     componentDidUpdate() {
+  //
+  // }
+
   render() {
-    // if(this.state.update_podcat == false){
-    //   this.listcats();
-    //   this.setState({update_podcat: true});
-    // }
-    //console.log("S ", this.state.title_cat);
-      const { classes } = this.props;
-    let {options:{title, _id}} = this.props
-    //console.log("Props    ", this.props.menu_left[0].pass);
-
-
-
+    const { classes } = this.props;
+    let {options:{title, _id}} = this.props;
     return (
-      <div>
 
+<div>
       <ListItem>
           <ListItemText primary={title} />
 
 
 
-  <Button variant="contained" onClick={() => this.handleClickOpen({_id, title})}>
+  <Button variant="contained" onClick={() => this.please_delete({_id})}>
   <Icon color="primary">
     clear
   </Icon>
@@ -187,42 +188,17 @@ this.setState({ [prop]: event.target.value });
         </ListItem>
 
 
-        <Divider />
 
-        <Dialog
-          open={this.state.open}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={this.handleClose}
-          aria-labelledby="alert-dialog-slide-title"
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle id="alert-dialog-slide-title">
-            {"Delete?"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              You seriously want to delete the {this.state.title_cat}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              No
-            </Button>
-            <Button onClick={() => this.please_delete()} color="primary">
-              Yea!
-            </Button>
-          </DialogActions>
-        </Dialog>
 
 
         </div>
+
     );
   }
 
 }
 
-  Cat.propTypes = {
+  Podcat.propTypes = {
     classes: PropTypes.object.isRequired,
   };
 
@@ -234,6 +210,7 @@ this.setState({ [prop]: event.target.value });
     }),
     dispatch => ({
       cat_up:(value) => dispatch({type: 'update_cats', payload: value}),
+      podcat_p:(value) => dispatch({type: 'podwindow_false', payload: value}),
       add_login:(value) => dispatch({type: 'OK', payload: value})
     })
-  )(withStyles(styles)(Cat));
+  )(withStyles(styles)(Podcat));

@@ -58,6 +58,12 @@ const styles = theme => ({
 
 var update = 0;
 var id = 0;
+var mode = "123";
+
+
+
+
+
 class Cat extends React.Component {
 
   constructor (props) {
@@ -66,7 +72,6 @@ class Cat extends React.Component {
   this.state = {
     open: false,
     open2: false,
-    update_podcat: false,
     id_cat: '',
     id_cat2: '',
     title_cat: 'nones',
@@ -78,30 +83,32 @@ class Cat extends React.Component {
   };
   }
 
-  otvet_rages = (res, ids) => {
-
-    //this.setState({ ranges: res });
-
-   //console.log("Получил rages ", res);
-
-  //console.log("YO ID ",  ids);
-   const new_massive =  res.filter((user) => {return user.value != ids;});
-   this.setState({ ranges: new_massive });
-  // console.log(new_massive);
-
-  };
+  // otvet_rages = (res, ids) => {
+  //
+  //   //this.setState({ ranges: res });
+  //
+  //  //console.log("Получил rages ", res);
+  //
+  // //console.log("YO ID ",  ids);
+  //
+  //  //console.log(new_massive);
+  //
+  // };
 
   listcats = data => {
 
     //console.log("no ID LA", id);
-
+    if(data =! "" || data != true || data != false){
     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp&catid="+data)
-      .then(res =>  {this.otvet_rages(res.data, data);
+      .then(res =>  {
+        //this.otvet_rages(res.data, data);
 
+        const new_massive =  res.data.filter((user) => {return user.value != data;});
+        this.setState({ ranges: new_massive });
 
       })
       .catch(err => console.log(err));
-
+}
 
 
 
@@ -141,10 +148,6 @@ class Cat extends React.Component {
 
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-
 
 
    get_cats = res => {
@@ -153,7 +156,7 @@ class Cat extends React.Component {
      //var tyn = Object.keys(this.state.cats_now).length;
      //var tyn = this.state.cats_now._id.length;
      //alert(tyn);
-    console.log("Получил get_cats: ", res);
+    //console.log("Получил get_cats: ", res);
   };
 
    please_up = data => {
@@ -178,7 +181,20 @@ class Cat extends React.Component {
 
   please_delete = data => {
             axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatdelete&catid="+this.state.id_cat)
-              .then(res =>  this.otventa(res.data))
+              .then(res =>  {
+                //this.otventa(res.data);
+
+                this.setState({ pod_cats: res.data });
+
+               //console.log("Получил подкатегорияы", res);
+
+               if(res.data == ""){
+                 this.setState({status_find_pocat: 0});
+                 console.log("PUSTO");
+               }
+               this.listcats(this.props.options._id);
+
+              })
               .catch(err => console.log(err));
                 this.setState({ open: false });
 
@@ -199,24 +215,39 @@ class Cat extends React.Component {
     this.setState({ open2: false });
   };
 
-  otventa = res => {
-    this.setState({ pod_cats: res });
-
-   //console.log("Получил подкатегорияы", res);
-
-   if(res == ""){
-     this.setState({status_find_pocat: 0});
-     //console.log(PUSTO);
-   }
- };
+ //  otventa = res => {
+ //    this.setState({ pod_cats: res });
+ //
+ //   //console.log("Получил подкатегорияы", res);
+ //
+ //   if(res == ""){
+ //     this.setState({status_find_pocat: 0});
+ //     console.log("PUSTO");
+ //   }
+ //   this.listcats(this.props.options._id);
+ // };
 
   handleClickOpen_pod = data => {
 
     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatpod&catidselected="+data._id)
-      .then(res =>  this.otventa(res.data))
-      .catch(err => console.log(err));
-        this.setState({ open2: true });
+      .then(res =>  {
+        //this.otventa(res.data);
 
+        this.setState({ pod_cats: res.data });
+
+       //console.log("Получил подкатегорияы", res);
+
+       if(res.data == ""){
+         this.setState({status_find_pocat: 0});
+         //console.log("PUSTO");
+       }
+       this.listcats(this.props.options._id);
+
+      })
+      .catch(err => console.log(err));
+
+        this.setState({ open2: true });
+        //console.log("opened list");
   };
 
 
@@ -261,33 +292,34 @@ class Cat extends React.Component {
     return;
   }
 
+  componentDidMount() {
+
+
+    //id = this.props.options._id;
+    this.listcats(this.props.options._id);
+    //console.log("POPESDSD ", this.props);
+
+      }
+      componentDidUpdate() {
+        if(this.props.cats[0].update == 1){
+          this.listcats(this.props.options._id);
+        }
+        if(this.props.pod2[0].podwindow == 1){
+        this.setState({ open2: false });
+        this.props.podcat_p();
+        }
+        mode = (this.state.status_find_pocat == 0) ? this.Addponewcat(this.props._id) : this.Addponewcat2();
+
+
+
+  }
+
   render() {
 
-     const mode = (this.state.status_find_pocat == 0) ? this.Addponewcat(this.props._id) : this.Addponewcat2();
-
-     const { classes } = this.props;
-     let {options:{title, _id}} = this.props;
-
-    if(this.state.update_podcat == false){
-      id = this.props.options._id;
-      this.listcats(this.props.options._id);
-      //console.log("POPESDSD ", this.props.options._id);
-      this.setState({update_podcat: true});
+    const { classes } = this.props;
+    let {options:{title, _id}} = this.props;
 
 
-    }
-
-
-    // if(this.props.cats[0].update == 1){
-    //   console.log("STATUS UPDATE CATS.JSX ", this.props.cats[0].update);
-    //   this.listcats(this.props.options._id);
-    //
-    // }
-
-
-
-  //const userForRemoveId = this.props.options._id;
-//this.state.pod_cats = this.state.pod_cats.filter((user) => {return user.id !== userForRemoveId;});
     return (
       <div>
       <ListItem>
@@ -362,7 +394,7 @@ class Cat extends React.Component {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
-            <div>
+
             {mode}
 
 
@@ -370,7 +402,7 @@ class Cat extends React.Component {
         options={item}
         key={item._id}
       />)}
-      </div>
+
 
 
 
@@ -393,10 +425,12 @@ class Cat extends React.Component {
   export default connect(
     state => ({
       menu_left: state.menu_left,
-      cats: state.cats
+      cats: state.cats,
+      pod2: state.podcat_p
     }),
     dispatch => ({
       cat_up:(value) => dispatch({type: 'update_cats', payload: value}),
+      podcat_p:(value) => dispatch({type: 'podwindow_true', payload: value}),
       add_login:(value) => dispatch({type: 'OK', payload: value})
     })
   )(withStyles(styles)(Cat));

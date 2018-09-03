@@ -31,7 +31,7 @@ var koko = 0;
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
-
+var mode = "load...";
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -80,11 +80,16 @@ this.test();
     }
   }
   componentDidMount() {
-    if (navigator.platform.indexOf("Win") > -1) {
-      const ps = new PerfectScrollbar(this.refs.mainPanel);
-    }
-    window.addEventListener("resize", this.resizeFunction);
-  }
+  //   if (navigator.platform.indexOf("Win") > -1) {
+  //     const ps = new PerfectScrollbar(this.refs.mainPanel);
+  //   }
+  //   window.addEventListener("resize", this.resizeFunction);
+  //
+     this.test();
+   }
+   loading = () => {
+     return;
+   }
   componentDidUpdate(e) {
     if (e.history.location.pathname !== e.location.pathname) {
       this.refs.mainPanel.scrollTop = 0;
@@ -92,182 +97,76 @@ this.test();
         this.setState({ mobileOpen: false });
       }
     }
+
+
+  
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeFunction);
   }
-  loginout = (classes, ...rest) => {
-    return(
-      <Sidebar
-        routes={dashboardRoutes}
-        logoText={"Creative Tim"}
-        logo={logo}
-        image={image}
-        handleDrawerToggle={this.handleDrawerToggle}
-        open={this.state.mobileOpen}
-        color="blue"
-        {...rest}
-      />
-    )
-  }
-  loginok =(classes, ...rest) => {
-    return(
-      <Sidebar
-        routes={loginuser}
-        logoText={"Creative Tim"}
-        logo={logo}
-        image={image}
-        handleDrawerToggle={this.handleDrawerToggle}
-        open={this.state.mobileOpen}
-        color="blue"
-        {...rest}
-      />
-    )
-  }
+
 
 
 
   render() {
-    this.test();
-    if(this.state.auth == false){
+const { classes, ...rest } = this.props;
 
-    const switchRoutes = (
-      <Switch>
-        {guest.map((prop, key) => {
-          if (prop.redirect)
-            return <Redirect from={prop.path} to={prop.to} key={key} />;
-          return <Route path={prop.path} component={prop.component} key={key} />;
-        })}
-      </Switch>
-    );
 
-    const user = (
-      <Switch>
-        {loginuser.map((prop, key) => {
-          if (prop.redirect)
-            return <Redirect from={prop.path} to={prop.to} key={key} />;
-          return <Route path={prop.path} component={prop.component} key={key} />;
-        })}
-      </Switch>
-    );
-    const { classes, ...rest } = this.props;
-    //const auth = (this.state.auth === false) ? this.switchRoutes : this.user;
-    const auth2 = (this.state.auth === false) ? this.loginout(classes, ...rest) : this.loginok(classes, ...rest);
 
-  // console.log("newwww ", this.props.menu_left[0].pass);
-  //console.log("newwww ", this.props.menu_left[0].pass);
-  //const texter = this.props.menu_left[0].pass;
+const switchRoutes2 = (
+  <Switch>
+    {this.props.sidebar.map((prop, key) => {
+      if (prop.redirect)
+        return <Redirect from={prop.path} to={prop.to} key={key} />;
+      return <Route path={prop.path} component={prop.component} key={key} />;
+    })}
+  </Switch>
+);
 
-  // function test() {
-  //    setInterval(() => {
-  //      i++;
-  //     console.log(i);
-  //
-  //   }, 1000);
-  // }
-  // test();
+const user2 = (
+  <Switch>
+    {this.props.sidebar.map((prop, key) => {
+      if (prop.redirect)
+        return <Redirect from={prop.path} to={prop.to} key={key} />;
+      return <Route path={prop.path} component={prop.component} key={key} />;
+    })}
+  </Switch>
+);
 
-    return (
-      <div className={classes.wrapper}>
-      <Sidebar
-        routes={guest}
-        logoText={"home-expenses"}
-        logo={logo}
-        image={image}
-        handleDrawerToggle={this.handleDrawerToggle}
-        open={this.state.mobileOpen}
-        color="blue"
-        {...rest}
-      />
-        <div className={classes.mainPanel} ref="mainPanel">
-          <Header
-            routes={dashboardRoutes}
-            handleDrawerToggle={this.handleDrawerToggle}
-            {...rest}
-          />
-          {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
-          {this.getRoute() ? (
-            <div className={classes.content}>
-              <div className={classes.container}>{switchRoutes}</div>
-            </div>
-          ) : (
-            <div className={classes.map}>{switchRoutes}</div>
-          )}
-          {this.getRoute() ? <Footer /> : null}
-        </div>
+
+    return (<div className={classes.wrapper}>
+    <Sidebar
+      routes={this.props.sidebar}
+      logoText={"home-expenses"}
+      logo={logo}
+      image={image}
+      handleDrawerToggle={this.handleDrawerToggle}
+      open={this.state.mobileOpen}
+      color="blue"
+      {...rest}
+    />
+      <div className={classes.mainPanel} ref="mainPanel">
+        <Header
+          routes={dashboardRoutes}
+          handleDrawerToggle={this.handleDrawerToggle}
+          {...rest}
+        />
+        {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
+        {this.getRoute() ? (
+          <div className={classes.content}>
+            <div className={classes.container}>{switchRoutes2}</div>
+          </div>
+        ) : (
+          <div className={classes.map}>{switchRoutes2}</div>
+        )}
+        {this.getRoute() ? <Footer /> : null}
       </div>
-    );
-  }else{
+    </div>
 
-    const switchRoutes = (
-      <Switch>
-        {dashboardRoutes.map((prop, key) => {
-          if (prop.redirect)
-            return <Redirect from={prop.path} to={prop.to} key={key} />;
-          return <Route path={prop.path} component={prop.component} key={key} />;
-        })}
-      </Switch>
-    );
-
-    const user = (
-      <Switch>
-        {loginuser.map((prop, key) => {
-          if (prop.redirect)
-            return <Redirect from={prop.path} to={prop.to} key={key} />;
-          return <Route path={prop.path} component={prop.component} key={key} />;
-        })}
-      </Switch>
-    );
-    const { classes, ...rest } = this.props;
-    //const auth = (this.state.auth === false) ? this.switchRoutes : this.user;
-    const auth2 = (this.state.auth === false) ? this.loginout(classes, ...rest) : this.loginok(classes, ...rest);
-
-  // console.log("newwww ", this.props.menu_left[0].pass);
-  //console.log("newwww ", this.props.menu_left[0].pass);
-  //const texter = this.props.menu_left[0].pass;
-
-  // function test() {
-  //    setInterval(() => {
-  //      i++;
-  //     console.log(i);
-  //
-  //   }, 1000);
-  // }
-  // test();
-
-    return (
-      <div className={classes.wrapper}>
-      <Sidebar
-        routes={loginuser}
-        logoText={"home-expenses"}
-        logo={logo}
-        image={image}
-        handleDrawerToggle={this.handleDrawerToggle}
-        open={this.state.mobileOpen}
-        color="blue"
-        {...rest}
-      />
-        <div className={classes.mainPanel} ref="mainPanel">
-          <Header
-            routes={dashboardRoutes}
-            handleDrawerToggle={this.handleDrawerToggle}
-            {...rest}
-          />
-          {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
-          {this.getRoute() ? (
-            <div className={classes.content}>
-              <div className={classes.container}>{switchRoutes}</div>
-            </div>
-          ) : (
-            <div className={classes.map}>{switchRoutes}</div>
-          )}
-          {this.getRoute() ? <Footer /> : null}
-        </div>
-      </div>
     );
 
 
-  }
+
 }
 }
 
@@ -278,9 +177,11 @@ App.propTypes = {
 //export default withStyles(dashboardStyle)(App);
 export default connect(
   state => ({
-    menu_left: state.menu_left
+    auth: state.auth,
+    sidebar: state.sidebar
   }),
   dispatch => ({
-    add_login:(value) => dispatch({type: 'SING_UP', payload: value})
+    //add_login:(value) => dispatch({type: 'SING_UP', payload: value}),
+    //sidebar_send:(value) => dispatch({type: 'auth_true', payload: value})
   })
 )(withStyles(dashboardStyle)(App));

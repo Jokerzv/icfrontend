@@ -19,6 +19,13 @@ import CardAvatar from "components/Card/CardAvatar.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
 import avatar from "assets/img/faces/marc.jpg";
 
 import { injectGlobal } from "styled-components";
@@ -93,45 +100,11 @@ class Auth extends React.Component {
     email_p: false,
     pass_p: false,
     status_u: "signup",
-    server: {}
+    server: {},
+    reports: []
   };
 }
 
-// componentWillMount () {
-//   this.loadJson()
-// }
-//
-// validateJson (json) {
-//   let validJson
-//
-//   try{
-//     validJson = JSON.stringify(JSON.parse(this.state.json), null, 2)
-//   } catch(e) {
-//     throw e
-//   }
-//
-//   return validJson
-// }
-
-// loadJson = () => {
-//   const json = window.localStorage.getItem(LOCALSTORAGE_KEY) || JSON.stringify(SAMPLE_JSON, null, 2)
-//   this.setState({ json })
-// }
-//
-// saveJson = () => {
-//   const validJson = this.validateJson(this.state.json)
-//
-//   if (!validJson) return;
-//
-//   window.localStorage.setItem(
-//     LOCALSTORAGE_KEY,
-//     validJson
-//   )
-// }
-//
-// handleChange = e => this.setState({
-//   json: e.target.value
-// })
 
 handleVerifChange = e => {
   this.setState({secret: e.target.value});
@@ -191,43 +164,6 @@ handleEmailChange = e => {
          .then(res =>  this.otventa(res.data))
          .catch(err => console.log(err));
 
-       //componentDidMount() {
-         //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-         //   .then(({ data }) => {
-         //     this.setState({
-         //       products: data
-         // });
-
-
-       //});
-       //  .then(response => response.data)
-       //  .then(this.setState({products: data}))
-       //  .catch(error => console.error(error));
-       // }
-
-
-       // setTimeout(
-       //   function() {
-       //     if(this.state.server.status == "error_login"){
-       //       this.setState({errors: 'Invalid email or password!'});
-       //       //console.log("Ошибка получена ",this.state.server.status);
-       //     }else if(this.state.server.status == "wellcome"){
-       //         sessionStorage.setItem("token", this.state.server.token);
-       //       //console.log("не получил ошибку",this.state.server.status);
-       //     }else{
-       //
-       //     }
-       //     this.setState({status_u: this.state.server.status});
-       //
-       //
-       //     console.log("Получил ",this.state.server);
-       //   }
-       //   .bind(this),
-       //   1000
-       // );
-      //window.localStorage.setItem("email", this.state.email);
-       //window.localStorage.setItem("pass", this.state.password);
-       //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
    }else if(!isEmpty(this.state.email) &&
      !isEmpty(this.state.password) &&
@@ -251,39 +187,6 @@ handleEmailChange = e => {
         .then(res => this.otventa(res.data))
         .catch(err => console.log(err));
 
-      //componentDidMount() {
-        //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-        //   .then(({ data }) => {
-        //     this.setState({
-        //       products: data
-        // });
-
-
-      //});
-      //  .then(response => response.data)
-      //  .then(this.setState({products: data}))
-      //  .catch(error => console.error(error));
-      // }
-
-      // setTimeout(
-      //   function() {
-      //     if(this.state.server.status == "error_secret"){
-      //       this.setState({errors: 'Invalid secret code'});
-      //       //console.log("Ошибка получена ",this.state.server.status);
-      //     }else{
-      //       //console.log("не получил ошибку",this.state.server.status);
-      //     }
-      //     this.setState({status_u: this.state.server.status});
-      //
-      //
-      //     console.log("Получил ",this.state.server);
-      //   }
-      //   .bind(this),
-      //   2000
-      // );
-
-      //window.localStorage.setItem("pass", this.state.password);
-      //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
   }else{
     console.log("Sing up error");
@@ -360,52 +263,42 @@ handleEmailChange = e => {
             <GridItem xs={12} sm={12} md={12}>
               <Card>
                 <CardHeader color="info">
-                  <h4 className={classes.cardTitleWhite}>New expenses</h4>
-                  <p className={classes.cardCategoryWhite}>Please, enter exoenses data here</p>
+                  <h4 className={classes.cardTitleWhite}>Expenses reports</h4>
+                  <p className={classes.cardCategoryWhite}>Here is some expense reports</p>
                 </CardHeader>
                 <CardBody>
-                {this.state.errors}
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={5}>
-                      <CustomInput
-                        labelText="Email"
-                        id="none"
-                        name="email"
-                        error={this.state.email_p}
-                        type="email"
-                        onChange={this.handleEmailChange}
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        /*
-                        inputProps={{
-                          disabled: true
-                        }}
-                        */
-                      />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={5}>
-                      <CustomInput
-                        labelText="Password"
-                        id="none"
-                        name="password"
-                        error={this.state.pass_p}
-                        onChange={this.handlePasswordChange}
-                        type="password"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                      />
-                    </GridItem>
-                  </GridContainer>
 
 
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell color="primary">Date</TableCell>
+              <TableCell numeric>Category</TableCell>
+              <TableCell numeric>Expenses</TableCell>
+              <TableCell numeric>Value, UAH</TableCell>
+
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {this.state.reports.map(row => {
+              return (
+                <TableRow key={row._id}>
+                  <TableCell component="th" scope="row">
+
+        {row.date_t}
+
+                  </TableCell>
+                  <TableCell numeric>{row.namecat}</TableCell>
+                  <TableCell numeric>{row.desc}</TableCell>
+                  <TableCell numeric>{row.value}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
 
                 </CardBody>
-                <CardFooter>
-                  <Button color="primary" onClick={() => this.handleLogin()}>Sign In</Button>
 
-                </CardFooter>
 
               </Card>
 
@@ -449,6 +342,33 @@ handleEmailChange = e => {
         </div>
       );
     }
+
+
+      getexpenses = () => {
+        //console.log("send token ", sessionStorage.getItem("token"));
+         //this.setState({status_u: "loading"});
+           //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
+           axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpenses")
+             .then(res => {
+               this.setState({ reports: res.data});
+
+
+               //start = 1;
+              //  this.props.update_cats_call();
+               //this.otventa(res.data);
+
+
+               //console.log("OK");
+             })
+             .catch(err => console.log(err));
+
+      }
+
+    componentDidMount() {
+
+      this.getexpenses();
+
+        }
   render(){
     //this.props.history.push('/signup');
   const { classes } = this.props;

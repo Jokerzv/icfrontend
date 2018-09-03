@@ -25,38 +25,11 @@ import NotificationsPage from "views/Notifications/Notifications.jsx";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
 
 
-// const user = [
-//   {
-//     path: "/dashboard",
-//     sidebarName: "Dashboard",
-//     navbarName: "User profile",
-//     icon: Dashboard,
-//     component: DashboardPage
-//   },
-//   {
-//     path: "/auth",
-//     sidebarName: "Reports",
-//     navbarName: "Account",
-//     icon: Assignment,
-//     component: Auth
-//   },
-//   {
-//     path: "/signup",
-//     sidebarName: "Config",
-//     navbarName: "Registration",
-//     icon: Set,
-//     component: Signup
-//   },
-//   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
-// ];
-
-//var dashboardRoutes = sign;
-
 const sign = [
   {
     path: "/dashboard",
     sidebarName: "Dashboard",
-    navbarName: "User profile",
+    navbarName: "Dashboard",
     icon: Dashboard,
     component: DashboardPage
   },

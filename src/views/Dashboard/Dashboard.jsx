@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 // react plugin for creating charts
 import ChartistGraph from "react-chartist";
 // @material-ui/core
-import withStyles from "@material-ui/core/styles/withStyles";
+import { withStyles } from '@material-ui/core/styles';
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
 import Store from "@material-ui/icons/Store";
@@ -20,7 +20,7 @@ import Cloud from "@material-ui/icons/Cloud";
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import Table from "components/Table/Table.jsx";
+import Table from '@material-ui/core/Table';
 import Tasks from "components/Tasks/Tasks.jsx";
 import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
 import Danger from "components/Typography/Danger.jsx";
@@ -30,251 +30,375 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 import { bugs, website, server } from "variables/general";
 
-import {
-  dailySalesChart,
-  emailsSubscriptionChart,
-  completedTasksChart
-} from "variables/charts";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
+import CustomInput from "components/CustomInput/CustomInput.jsx";
+import TextField from '@material-ui/core/TextField';
+import classNames from 'classnames';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Button from "components/CustomButtons/Button.jsx";
+
+
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
+import axios from "axios";
+
+
+let id = 0;
+function createData(name, calories, fat, carbs, protein) {
+  id += 1;
+  return { id, name, calories, fat, carbs, protein };
+}
+
+const rows = [
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData('Eclair', 262, 16.0, 24, 6.0),
+  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Gingerbread', 356, 16.0, 49, 3.9),
+];
+
+
+const styles = {
+  cardCategoryWhite: {
+    color: "rgba(255,255,255,.62)",
+    margin: "0",
+    fontSize: "14px",
+    marginTop: "0",
+    marginBottom: "0"
+  },
+  cardTitleWhite: {
+    color: "#FFFFFF",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: "3px",
+    textDecoration: "none"
+  },
+  itpos: {
+    position: "relative",
+    top: "30px"
+  },
+  itpos2: {
+    position: "relative",
+    top: "10px"
+  }
+};
+
+function validateValue(value) {
+  var pattern  = /^([0-9]*[.])?[0-9]+$/;
+  return pattern .test(value);
+};
+
+
+function validateDesc(desc) {
+  var pattern  = /^[a-zA-Z0-9\s]+$/;
+  return pattern .test(desc);
+};
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
+}
 
 class Dashboard extends React.Component {
-  state = {
-    value: 0
-  };
-  handleChange = (event, value) => {
-    this.setState({ value });
-  };
+  constructor (props) {
+  super(props)
 
-  handleChangeIndex = index => {
-    this.setState({ value: index });
+  this.state = {
+    open: false,
+    open2: false,
+    id_cat: '',
+    id_cat2: '',
+    title_cat: 'nones',
+    pod_cats: [],
+    expenses: [],
+    ranges: [],
+    selected_cat: ' ',
+    status_find_pocat: 1,
+    desc: '',
+    value: '',
+    value_p: false,
+    desc_p: false
   };
+  }
+
+  handleValueChange = e => {
+    this.setState({value: e.target.value});
+    if(validateValue(e.target.value)){
+      this.setState({value_p: true});
+      //console.log("value true", e.target.value);
+    }else{
+      //console.log("value false", e.target.value);
+      this.setState({value_p: false});
+    }
+    };
+
+  handleDescChange = e => {
+      this.setState({desc: e.target.value});
+      if(validateDesc(e.target.value)){
+        this.setState({desc_p: true});
+        //console.log("desc true", e.target.value);
+      }else{
+        //console.log("desc false", e.target.value);
+        this.setState({desc_p: false});
+      }
+      };
+
+  handleChange = prop => event => {
+
+    // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp")
+    //   .then(res =>  this.otventa(res.data))
+    //   .catch(err => console.log(err));
+        this.setState({ open: false });
+        this.setState({ open2: false });
+        this.setState({ [prop]: event.target.value });
+      this.setState({ selected_cat: event.target.value });
+
+      //console.log("Selected CAT now ", event.target.value);
+
+      // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscataddp&selectedcatid="+event.target.value+"&catid="+this.props.options._id)
+      //   .then(res =>  this.get_cats(res.data))
+      //   .catch(err => console.log(err));
+      //console.log("Selected CAT ", this.state.selected_cat);
+    };
+
+  getcat = () => {
+    //console.log("send token ", sessionStorage.getItem("token"));
+     //this.setState({status_u: "loading"});
+       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
+       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpensesselect_cats")
+         .then(res => {
+           if(res.data == ""){
+            var cats_pod_not = [{
+               value: 0,
+               label: "Not category"
+             }];
+             this.setState({ pod_cats: cats_pod_not});
+           }else{
+             this.setState({ pod_cats: res.data});
+           }
+
+           //start = 1;
+          //  this.props.update_cats_call();
+           //this.otventa(res.data);
+
+
+           //console.log("OK");
+         })
+         .catch(err => console.log(err));
+
+  }
+
+  getexpenses = () => {
+    //console.log("send token ", sessionStorage.getItem("token"));
+     //this.setState({status_u: "loading"});
+       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
+       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpenses")
+         .then(res => {
+           this.setState({ expenses: res.data});
+
+
+           //start = 1;
+          //  this.props.update_cats_call();
+           //this.otventa(res.data);
+
+
+           //console.log("OK");
+         })
+         .catch(err => console.log(err));
+
+  }
+
+  addexpense = () => {
+   //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
+   if(!isEmpty(this.state.value) &&
+     !isEmpty(this.state.desc) &&
+     this.state.desc_p == true &&
+     this.state.value_p == true
+   ){
+     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=addexpense&namecat="+this.state.selected_cat+"&value="+this.state.value+"&desc="+this.state.desc)
+       .then(res => {
+         this.setState({ pod_cats: res.data});
+         this.getcat();
+         this.getexpenses();
+         //start = 1;
+        //  this.props.update_cats_call();
+         //this.otventa(res.data);
+
+
+         //console.log("OK");
+       })
+       .catch(err => console.log(err));
+     console.log("Okey");
+
+
+   }else{
+     console.log("VALUE ", this.state.value);
+     console.log("DESC ", this.state.desc);
+   }
+ }
+
+  componentDidMount() {
+    this.getcat();
+    this.getexpenses();
+
+      }
+      componentDidUpdate() {
+        //mode = (this.state.status_find_pocat == 0) ? this.Addponewcat(this.props._id) : this.Addponewcat2();
+
+
+
+  }
+
   render() {
+
     const { classes } = this.props;
     return (
-      <div>
+
+
         <GridContainer>
-          <GridItem xs={12} sm={6} md={3}>
+          <GridItem xs={12} sm={12} md={12}>
             <Card>
-              <CardHeader color="warning" stats icon>
-                <CardIcon color="warning">
-                  <Icon>content_copy</Icon>
-                </CardIcon>
-                <p className={classes.cardCategory}>Used Space</p>
-                <h3 className={classes.cardTitle}>
-                  49/50 <small>GB</small>
-                </h3>
+              <CardHeader color="info">
+                <h4 className={classes.cardTitleWhite}>New expenses</h4>
+                <p className={classes.cardCategoryWhite}>Please enter new expenses data here</p>
               </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                  <Danger>
-                    <Warning />
-                  </Danger>
-                  <a href="#pablo" onClick={e => e.preventDefault()}>
-                    Get more space
-                  </a>
-                </div>
-              </CardFooter>
+              <CardBody>
+                <GridContainer>
+                <GridItem xs={7} sm={7} md={2}>
+                          <TextField
+                            className={classes.itpos}
+                              select
+                              label="Category"
+
+                              value={this.state.weightRange}
+                              onChange={this.handleChange('weightRange')}
+                              InputProps={{
+                                startAdornment: <InputAdornment position="start"></InputAdornment>,
+                              }}
+                            >
+
+                              {this.state.pod_cats.map(option => (
+                                <MenuItem key={option.value} value={option.label}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+
+                              </GridItem>
+                            <GridItem xs={12} sm={12} md={3}>
+                              <CustomInput
+                                labelText="Description"
+                                id="none"
+                                name="desc"
+                                error={this.state.email_p}
+                                type="email"
+                                onChange={this.handleDescChange}
+                                formControlProps={{
+                                  fullWidth: true
+                                }}
+                                /*
+                                inputProps={{
+                                  disabled: true
+                                }}
+                                */
+                              />
+                            </GridItem>
+                            <GridItem xs={12} sm={12} md={3}>
+
+
+
+                              <TextField
+                                id="full-width"
+                                label="Value"
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
+                                placeholder="UAH"
+                                onChange={this.handleValueChange}
+                                className={classes.itpos2}
+                                fullWidth
+                                margin="normal"
+                              />
+                            </GridItem>
+
+                            <GridItem xs={12} sm={12} md={3}><Button color="primary" className={classes.itpos} onClick={() => this.addexpense()}>ADD EXPENSES</Button></GridItem>
+                          </GridContainer>
+
+              </CardBody>
+
+
             </Card>
+
           </GridItem>
-          <GridItem xs={12} sm={6} md={3}>
+
+
+          <GridItem xs={12} sm={12} md={12}>
             <Card>
-              <CardHeader color="success" stats icon>
-                <CardIcon color="success">
-                  <Store />
-                </CardIcon>
-                <p className={classes.cardCategory}>Revenue</p>
-                <h3 className={classes.cardTitle}>$34,245</h3>
+              <CardHeader color="info">
+                <h4 className={classes.cardTitleWhite}>Latest expenses</h4>
+                <p className={classes.cardCategoryWhite}>Here is latest 20 expenses</p>
               </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                  <DateRange />
-                  Last 24 Hours
-                </div>
-              </CardFooter>
+              <CardBody>
+
+
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell color="primary">Date</TableCell>
+            <TableCell numeric>Category</TableCell>
+            <TableCell numeric>Expenses</TableCell>
+            <TableCell numeric>Value, UAH</TableCell>
+
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {this.state.expenses.map(row => {
+            return (
+              <TableRow key={row._id}>
+                <TableCell component="th" scope="row">
+
+      {row.date_t}
+
+                </TableCell>
+                <TableCell numeric>{row.namecat}</TableCell>
+                <TableCell numeric>{row.desc}</TableCell>
+                <TableCell numeric>{row.value}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+
+              </CardBody>
+
+
             </Card>
+
           </GridItem>
-          <GridItem xs={12} sm={6} md={3}>
-            <Card>
-              <CardHeader color="danger" stats icon>
-                <CardIcon color="danger">
-                  <Icon>info_outline</Icon>
-                </CardIcon>
-                <p className={classes.cardCategory}>Fixed Issues</p>
-                <h3 className={classes.cardTitle}>75</h3>
-              </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                  <LocalOffer />
-                  Tracked from Github
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={6} md={3}>
-            <Card>
-              <CardHeader color="info" stats icon>
-                <CardIcon color="info">
-                  <Accessibility />
-                </CardIcon>
-                <p className={classes.cardCategory}>Followers</p>
-                <h3 className={classes.cardTitle}>+245</h3>
-              </CardHeader>
-              <CardFooter stats>
-                <div className={classes.stats}>
-                  <Update />
-                  Just Updated
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
+
         </GridContainer>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={4}>
-            <Card chart>
-              <CardHeader color="success">
-                <ChartistGraph
-                  className="ct-chart"
-                  data={dailySalesChart.data}
-                  type="Line"
-                  options={dailySalesChart.options}
-                  listener={dailySalesChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>Daily Sales</h4>
-                <p className={classes.cardCategory}>
-                  <span className={classes.successText}>
-                    <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                  </span>{" "}
-                  increase in today sales.
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> updated 4 minutes ago
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Card chart>
-              <CardHeader color="warning">
-                <ChartistGraph
-                  className="ct-chart"
-                  data={emailsSubscriptionChart.data}
-                  type="Bar"
-                  options={emailsSubscriptionChart.options}
-                  responsiveOptions={emailsSubscriptionChart.responsiveOptions}
-                  listener={emailsSubscriptionChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>Email Subscriptions</h4>
-                <p className={classes.cardCategory}>
-                  Last Campaign Performance
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> campaign sent 2 days ago
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
-            <Card chart>
-              <CardHeader color="danger">
-                <ChartistGraph
-                  className="ct-chart"
-                  data={completedTasksChart.data}
-                  type="Line"
-                  options={completedTasksChart.options}
-                  listener={completedTasksChart.animation}
-                />
-              </CardHeader>
-              <CardBody>
-                <h4 className={classes.cardTitle}>Completed Tasks</h4>
-                <p className={classes.cardCategory}>
-                  Last Campaign Performance
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>
-                  <AccessTime /> campaign sent 2 days ago
-                </div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-        </GridContainer>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={6}>
-            <CustomTabs
-              title="Tasks:"
-              headerColor="primary"
-              tabs={[
-                {
-                  tabName: "Bugs",
-                  tabIcon: BugReport,
-                  tabContent: (
-                    <Tasks
-                      checkedIndexes={[0, 3]}
-                      tasksIndexes={[0, 1, 2, 3]}
-                      tasks={bugs}
-                    />
-                  )
-                },
-                {
-                  tabName: "Website",
-                  tabIcon: Code,
-                  tabContent: (
-                    <Tasks
-                      checkedIndexes={[0]}
-                      tasksIndexes={[0, 1]}
-                      tasks={website}
-                    />
-                  )
-                },
-                {
-                  tabName: "Server",
-                  tabIcon: Cloud,
-                  tabContent: (
-                    <Tasks
-                      checkedIndexes={[1]}
-                      tasksIndexes={[0, 1, 2]}
-                      tasks={server}
-                    />
-                  )
-                }
-              ]}
-            />
-          </GridItem>
-          <GridItem xs={12} sm={12} md={6}>
-            <Card>
-              <CardHeader color="warning">
-                <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
-                <p className={classes.cardCategoryWhite}>
-                  New employees on 15th September, 2016
-                </p>
-              </CardHeader>
-              <CardBody>
-                <Table
-                  tableHeaderColor="warning"
-                  tableHead={["ID", "Name", "Salary", "Country"]}
-                  tableData={[
-                    ["1", "Dakota Rice", "$36,738", "Niger"],
-                    ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                    ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                    ["4", "Philip Chaney", "$38,735", "Korea, South"]
-                  ]}
-                />
-              </CardBody>
-            </Card>
-          </GridItem>
-        </GridContainer>
-      </div>
+
+
+
+
+
+
+
     );
   }
 }
@@ -283,4 +407,4 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Dashboard);
+export default (withStyles(styles)(Dashboard));

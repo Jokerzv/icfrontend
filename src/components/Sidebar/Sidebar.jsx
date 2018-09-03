@@ -287,83 +287,10 @@ var Sidebar = ({ ...props }) => {
     </List>
   );
 
-  var links2 = (
-    <List className={classes.list}>
-      {routes.map((prop, key) => {
-        //console.log(prop.path);
-        if (prop.redirect || prop.path === '/signup') return null;
-        var activePro = " ";
-        var listItemClasses;
-        if (prop.path === "/upgrade-to-pro") {
-          activePro = classes.activePro + " ";
-          listItemClasses = classNames({
-            [" " + classes[color]]: true
-          });
-        } else {
-          listItemClasses = classNames({
-            [" " + classes[color]]: activeRoute(prop.path)
-          });
-        }
-        const whiteFontClasses = classNames({
-          [" " + classes.whiteFont]: activeRoute(prop.path)
-        });
-        return (
-          <NavLink
-            to={prop.path}
-            className={activePro + classes.item}
-            activeClassName="active"
-            key={key}
-          >
-            <ListItem button className={classes.itemLink + listItemClasses}>
-              <ListItemIcon className={classes.itemIcon + whiteFontClasses}>
-                {typeof prop.icon === "string" ? (
-                  <Icon>{prop.icon}</Icon>
-                ) : (
-                  <prop.icon />
-                )}
-              </ListItemIcon>
-              <ListItemText
-                primary={prop.sidebarName}
-                className={classes.itemText + whiteFontClasses}
-                disableTypography={true}
-              />
-            </ListItem>
-          </NavLink>
-        );
-      })}
-    </List>
-  );
-
-  links3 = links;
-  function test () {
-    if(t == 0){
-     setTimeout(() => {
-
-     //console.log("up test");
-
-
-     if(!isEmpty(sessionStorage.getItem("token"))){
-        links3 = links2;
-        //console.log("zamena!");
-        t = 1;
-
-     }else{
-      links3 = links;
-      //console.log("123");
-     }
-
-     test();
-
-   }, 1000);
-  }
-
-  }
-
-  test();
 
   var brand = (
     <div className={classes.logo}>
-      <a href="https://www.creative-tim.com" className={classes.logoLink}>
+      <a href="/" className={classes.logoLink}>
         <div className={classes.logoImage}>
           <img src={logo} alt="logo" className={classes.img} />
         </div>

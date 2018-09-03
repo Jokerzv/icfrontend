@@ -46,14 +46,8 @@ const styles = {
   }
 };
 
-const SAMPLE_JSON = {
-"id": 0,
-"email": '',
-"password": '',
-"verify": 0
-}
 
-
+var start = 0;
 class Auth extends React.Component {
   constructor (props) {
   super(props)
@@ -65,7 +59,6 @@ class Auth extends React.Component {
     email_p: false,
     pass_p: false,
     status_u: "signup",
-    getcat: false,
     server: [],
     p_update: false
   };
@@ -74,7 +67,7 @@ class Auth extends React.Component {
 
   otventa = res => {
 
-   this.setState({ server: res, getcat: true})
+   this.setState({ server: res})
     this.props.update_cats_call();
    //console.log("Получил ",this.state.server);
  };
@@ -90,12 +83,20 @@ class Auth extends React.Component {
   this.props.update_cats();
  }
 
- getcat = e => {
+ getcat = () => {
    //console.log("send token ", sessionStorage.getItem("token"));
     //this.setState({status_u: "loading"});
       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
       axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getcat")
-        .then(res => this.otventa(res.data))
+        .then(res => {
+          this.setState({ server: res.data})
+          start = 1;
+           this.props.update_cats_call();
+          //this.otventa(res.data);
+
+
+          //console.log("OK");
+        })
         .catch(err => console.log(err));
 
  }
@@ -107,93 +108,96 @@ class Auth extends React.Component {
 
 
 
-    cat = (classes) => {
-      return (
 
-        <div>
-          <GridContainer>
-            <GridItem xs={12} sm={12} md={12}>
-              <Card>
-                <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Edit Categories</h4>
-                  <p className={classes.cardCategoryWhite}>Please, confog yor categories</p>
-                </CardHeader>
-                <CardBody>
-                <GridContainer>
-              <div>
-                {this.state.server.map(item => <Cat
-          options={item}
-          key={item._id}
+    componentDidMount() {
+            this.getcat();
 
-        />)}
-        </div>
-                  </GridContainer>
+        }
+
+        componentDidUpdate() {
+          if(this.props.cats[0].update == 1){
+            //start = 0;
+             this.getcat();
+
+          }
 
 
 
-                </CardBody>
-                <CardFooter>
-                  <Button color="primary" onClick={() => this.addcat()}>ADD CATEGORY</Button>
-
-                </CardFooter>
-
-              </Card>
-
-            </GridItem>
-
-          </GridContainer>
-        </div>
-      );
 
     }
 
   render(){
+const { classes } = this.props;
 
-    //console.log("update ", this.props.cats.update);
-    //this.getcat();
-    if(this.props.cats[0].update == 1){
-      //console.log("STATUS UPDATE ", this.props.cats[0].update);
+if(start == 0){
+  return(
+    <GridContainer>
+      <GridItem xs={12} sm={12} md={12}>
+        <Card>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Edit Categories</h4>
+            <p className={classes.cardCategoryWhite}>Please, config your categories</p>
+          </CardHeader>
+          <CardBody>
 
-      //this.setState({getcat: false});
-      // console.log("STATUS UPDATE ", this.props.cats[0].update);
-      // console.log("update start CAT");
-      // this.();
-      // console.log("update end CAT");
-      // //this.props.update_cats();
-       this.getcat();
-       //this.setState({getcat: false});
+            <div className={classes.root}>
 
-      //this.setState({p_update: true});
-      //console.log("OK");
-    }
+                  <LinearProgress />
+                    <br />
 
-    // if(this.props.cats.update == 1){
-    //     this.getcat();
-    //   this.props.update_cats();
-    //   this.props.update_cats_cal();
-    // }
-//this.props.add_login();
-    if(this.state.getcat == false){
-      this.getcat();
-      this.setState({getcat: true});
-      //this.props.update_cats();
-      //this.props.update_cats_call();
-    }
-  //console.log("props: ", this.props.cats);
-    //this.props.history.push('/signup');
-  const { classes } = this.props;
-//const texter = this.props.menu_left[0].pass;
-  //const { name, pass, age } = this.props.user;
- //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
+                </div>
 
 
 
-//console.log("my ", this.props.menu_left);
- //const mode = (this.state.singup) ? this.rendEdit(contact, index) : this.rendNorm(contact, index);
+        </CardBody>
 
- const mode = this.cat(classes);
 
-  return (mode);
+      </Card>
+
+    </GridItem>
+
+  </GridContainer>
+    );
+
+}else{
+
+  return(
+    <div>
+      <GridContainer>
+        <GridItem xs={12} sm={12} md={12}>
+          <Card>
+            <CardHeader color="primary">
+              <h4 className={classes.cardTitleWhite}>Edit Categories</h4>
+              <p className={classes.cardCategoryWhite}>Please, config your categories</p>
+            </CardHeader>
+            <CardBody>
+            <GridContainer>
+          <div>
+            {this.state.server.map(item => <Cat
+      options={item}
+      key={item._id}
+
+    />)}
+    </div>
+              </GridContainer>
+
+
+
+            </CardBody>
+            <CardFooter>
+              <Button color="primary" onClick={() => this.addcat()}>ADD CATEGORY</Button>
+
+            </CardFooter>
+
+          </Card>
+
+        </GridItem>
+
+      </GridContainer>
+    </div>
+  );
+}
+
 }
 }
 

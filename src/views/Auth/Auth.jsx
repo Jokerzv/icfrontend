@@ -18,6 +18,8 @@ import CardAvatar from "components/Card/CardAvatar.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
+import LoadPage from "components/Auth/loading_page.jsx";
+
 import avatar from "assets/img/faces/marc.jpg";
 
 import { injectGlobal } from "styled-components";
@@ -25,6 +27,7 @@ import axios from "axios";
 
 import history from '../history/history';
 
+var start = 0;
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -44,12 +47,6 @@ const styles = {
   }
 };
 
-const SAMPLE_JSON = {
-"id": 0,
-"email": '',
-"password": '',
-"verify": 0
-}
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -66,20 +63,7 @@ function validatePass(pass) {
 };
 
 
-// function userss(state = [], action) {
-//   if (action.type === 'SING_UP') {
-//     return [
-//       ...state,
-//       action.payload
-//     ];
-//   }
-// return state;
-// }
-
-
-
-
-//const LOCALSTORAGE_KEY = './users'
+var mode = LoadPage;
 
 class Auth extends React.Component {
   constructor (props) {
@@ -95,42 +79,6 @@ class Auth extends React.Component {
     server: {}
   };
 }
-
-// componentWillMount () {
-//   this.loadJson()
-// }
-//
-// validateJson (json) {
-//   let validJson
-//
-//   try{
-//     validJson = JSON.stringify(JSON.parse(this.state.json), null, 2)
-//   } catch(e) {
-//     throw e
-//   }
-//
-//   return validJson
-// }
-
-// loadJson = () => {
-//   const json = window.localStorage.getItem(LOCALSTORAGE_KEY) || JSON.stringify(SAMPLE_JSON, null, 2)
-//   this.setState({ json })
-// }
-//
-// saveJson = () => {
-//   const validJson = this.validateJson(this.state.json)
-//
-//   if (!validJson) return;
-//
-//   window.localStorage.setItem(
-//     LOCALSTORAGE_KEY,
-//     validJson
-//   )
-// }
-//
-// handleChange = e => this.setState({
-//   json: e.target.value
-// })
 
 handleVerifChange = e => {
   this.setState({secret: e.target.value});
@@ -158,38 +106,38 @@ handleEmailChange = e => {
     }
   };
 
-  otventa = res => {
-   this.setState({ server: res })
-   if(this.state.server.status == "error_login"){
-     this.setState({errors: 'Invalid email or password!'});
-     //console.log("Ошибка получена ",this.state.server.status);
-   }else if(this.state.server.status == "wellcome"){
 
-       sessionStorage.setItem("token", this.state.server.token);
-       sessionStorage.setItem("email", this.state.server.email);
-       this.props.history.push('/dashboard');
-
-     //console.log("не получил ошибку",this.state.server.status);
-   }else{
-
-   }
-   this.setState({status_u: this.state.server.status});
-
-
-   console.log("Получил ",this.state.server);
- };
 
   handleLogin = e => {
-   //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
-
-
 
    if(!isEmpty(this.state.email) &&
      !isEmpty(this.state.password)){
+
        this.setState({status_u: "loading"});
        //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
        axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&pass="+this.state.password+"&status=login")
-         .then(res =>  this.otventa(res.data))
+         .then(res =>  {
+           //this.otventa(res.data)
+           if(res.data.status == "error_login"){
+             this.setState({errors: 'Invalid email or password!'});
+             //console.log("Ошибка получена ",this.state.server.status);
+           }else if(res.data.status == "wellcome"){
+
+               sessionStorage.setItem("token", res.data.token);
+               sessionStorage.setItem("email", res.data.email);
+               //this.setState({status_u: "loading"});
+               start = 0;
+               this.props.auth_send();
+               this.props.history.push('/dashboard');
+             //console.log("не получил ошибку",this.state.server.status);
+           }else{
+
+           }
+           this.setState({status_u: res.data.status});
+
+
+           console.log("Получил ",res.data);
+         })
          .catch(err => console.log(err));
 
        //componentDidMount() {
@@ -425,7 +373,7 @@ handleEmailChange = e => {
             <GridItem xs={12} sm={12} md={12}>
               <Card>
                 <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Plaese waiting...</h4>
+                  <h4 className={classes.cardTitleWhite}>Please waiting...</h4>
                   <p className={classes.cardCategoryWhite}>Sign in</p>
                 </CardHeader>
                 <CardBody>
@@ -450,24 +398,40 @@ handleEmailChange = e => {
         </div>
       );
     }
+
+
+    componentDidMount() {
+      start = 1;
+      const { classes } = this.props;
+
+       mode = (this.state.status_u == "signin") ? this.signin(classes) :
+                   (this.state.status_u == "loading") ? this.loading(classes) :
+                   (this.state.status_u == "verif") ? this.verif(classes) :
+                   this.loading(classes);
+
+                   //console.log(this.props);
+        }
+
+    componentDidUpdate() {
+      const { classes } = this.props;
+
+       mode = (this.state.status_u == "signin") ? this.signin(classes) :
+                   (this.state.status_u == "loading") ? this.loading(classes) :
+                   (this.state.status_u == "verif") ? this.verif(classes) :
+                   this.signin(classes);
+
+    //  console.log("update AUTH");
+    }
   render(){
     //this.props.history.push('/signup');
-  const { classes } = this.props;
-//const texter = this.props.menu_left[0].pass;
-  //const { name, pass, age } = this.props.user;
- //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
 
+    if(start == 1){
+      return(mode);
+    }else{
+      return (<LoadPage />);
+    }
 
-//console.log("my ", this.props.menu_left);
- //const mode = (this.state.singup) ? this.rendEdit(contact, index) : this.rendNorm(contact, index);
-
- const mode = (this.state.status_u == "signin") ? this.signin(classes) :
-              (this.state.status_u == "loading") ? this.loading(classes) :
-              (this.state.status_u == "verif") ? this.verif(classes) :
-              this.signin(classes);
-
-  return (mode);
 }
 }
 
@@ -476,10 +440,12 @@ handleEmailChange = e => {
 //export default withStyles(styles)(Auth);
 export default connect(
   state => ({
-    menu_left: state.menu_left
+    menu_left: state.menu_left,
+    auth: state.auth
   }),
   dispatch => ({
-    add_login:(value) => dispatch({type: 'OK', payload: value})
+    add_login:(value) => dispatch({type: 'OK', payload: value}),
+    auth_send:(value) => dispatch({type: 'auth_true', payload: value})
   })
 )(withStyles(styles)(Auth));
 

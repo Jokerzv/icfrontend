@@ -122,6 +122,7 @@ handleEmailChange = e => {
    }else if(this.state.server.status == "wellcome"){
        sessionStorage.setItem("token", this.state.server.token);
        sessionStorage.setItem("email", this.state.server.email);
+       this.props.auth_send();
        this.props.history.push('/dashboard');
      //console.log("не получил ошибку",this.state.server.status);
    }else{
@@ -171,48 +172,6 @@ handleRepasswordChange = e => {
         .then(res => this.otventa(res.data))
         .catch(err => console.log(err));
 
-      //componentDidMount() {
-        //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-        //   .then(({ data }) => {
-        //     this.setState({
-        //       products: data
-        // });
-
-
-      //});
-      //  .then(response => response.data)
-      //  .then(this.setState({products: data}))
-      //  .catch(error => console.error(error));
-      // }
-
-      // setTimeout(
-      //   function() {
-      //       console.log("Status1 ",this.state.server.status);
-      //     this.setState({status_u: this.state.server.status, secret: this.state.server.secret});
-      //
-      //     if(this.state.server.status == "cancel_email"){
-      //       this.setState({errors: 'Error! Email already registered in the system!'});
-      //       //console.log("Ошибка получена ",this.state.server.status);
-      //     }else if(this.state.server.status == "wellcome"){
-      //         sessionStorage.setItem("token", this.state.server.token);
-      //         console.log("Save token ", this.state.server.token);
-      //         console.log("Token ", sessionStorage.getItem("token"));
-      //       //console.log("не получил ошибку",this.state.server.status);
-      //     }else{
-      //
-      //     }
-      //
-      //
-      //
-      //     console.log("Получил ",this.state.server);
-      //     console.log("Status ",this.state.server.status);
-      //   }
-      //   .bind(this),
-      //   1000
-      // );
-      //window.localStorage.setItem("email", this.state.email);
-      //window.localStorage.setItem("pass", this.state.password);
-      //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
   }else if(!isEmpty(this.state.email) &&
     !isEmpty(this.state.password) &&
@@ -240,48 +199,6 @@ handleVerif = e => {
        .then(res => this.otventa(res.data))
        .catch(err => console.log(err));
 
-     //componentDidMount() {
-       //axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-       //   .then(({ data }) => {
-       //     this.setState({
-       //       products: data
-       // });
-
-
-     //});
-     //  .then(response => response.data)
-     //  .then(this.setState({products: data}))
-     //  .catch(error => console.error(error));
-     // }
-
-     // setTimeout(
-     //   function() {
-     //       console.log("Status1 ",this.state.server.status);
-     //     this.setState({status_u: this.state.server.status, secret: this.state.server.secret});
-     //
-     //     if(this.state.server.status == "cancel_email"){
-     //       this.setState({errors: 'Error! Email already registered in the system!'});
-     //       //console.log("Ошибка получена ",this.state.server.status);
-     //     }else if(this.state.server.status == "wellcome"){
-     //         sessionStorage.setItem("token", this.state.server.token);
-     //         console.log("Save token ", this.state.server.token);
-     //         console.log("Token ", sessionStorage.getItem("token"));
-     //       //console.log("не получил ошибку",this.state.server.status);
-     //     }else{
-     //
-     //     }
-     //
-     //
-     //
-     //     console.log("Получил ",this.state.server);
-     //     console.log("Status ",this.state.server.status);
-     //   }
-     //   .bind(this),
-     //   1000
-     // );
-     //window.localStorage.setItem("email", this.state.email);
-     //window.localStorage.setItem("pass", this.state.password);
-     //console.log(localStorage.getItem("email")+" "+localStorage.getItem("pass"));
 
  }else{
    console.log("Sing up error");
@@ -523,4 +440,15 @@ function matchDispatchToProps(dispatch) {
 
 
 //export default withStyles(styles)(Auth);
-export default withStyles(styles)(connect(mapStateToProps, matchDispatchToProps)(SignUp));
+export default connect(
+  state => ({
+    menu_left: state.menu_left,
+    auth: state.auth
+  }),
+  dispatch => ({
+    add_login:(value) => dispatch({type: 'OK', payload: value}),
+    auth_send:(value) => dispatch({type: 'auth_true', payload: value})
+  })
+)(withStyles(styles)(SignUp));
+
+//export default withStyles(styles)(connect(mapStateToProps, matchDispatchToProps)(SignUp));
