@@ -26,6 +26,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import Rep_pod from './rep_pod';
+
 import avatar from "assets/img/faces/marc.jpg";
 
 import { injectGlobal } from "styled-components";
@@ -101,161 +103,16 @@ class Auth extends React.Component {
     pass_p: false,
     status_u: "signup",
     server: {},
-    reports: []
+    reports: [],
+    rep_pod: []
   };
 }
 
 
-handleVerifChange = e => {
-  this.setState({secret: e.target.value});
-  };
-
-handleEmailChange = e => {
-  this.setState({email: e.target.value});
-  if(!validateEmail(e.target.value)){
-    this.setState({email_p: true});
-    //console.log("email true", e.target.value);
-  }else{
-    //console.log("email false", e.target.value);
-    this.setState({email_p: false});
-  }
-  };
-
-  handlePasswordChange = e => {
-    this.setState({password: e.target.value});
-    if(!validatePass(e.target.value)){
-      this.setState({pass_p: true});
-      //console.log("email true", e.target.value);
-    }else{
-      //console.log("email false", e.target.value);
-      this.setState({pass_p: false});
-    }
-  };
-
-  otventa = res => {
-   this.setState({ server: res })
-   if(this.state.server.status == "error_login"){
-     this.setState({errors: 'Invalid email or password!'});
-     //console.log("Ошибка получена ",this.state.server.status);
-   }else if(this.state.server.status == "wellcome"){
-       sessionStorage.setItem("token", this.state.server.token);
-       sessionStorage.setItem("email", this.state.server.email);
-       this.props.history.push('/dashboard');
-     //console.log("не получил ошибку",this.state.server.status);
-   }else{
-
-   }
-   this.setState({status_u: this.state.server.status});
-
-
-   console.log("Получил ",this.state.server);
- };
-
-  handleLogin = e => {
-   //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
 
 
 
-   if(!isEmpty(this.state.email) &&
-     !isEmpty(this.state.password)){
-       this.setState({status_u: "loading"});
-       //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-       axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&pass="+this.state.password+"&status=login")
-         .then(res =>  this.otventa(res.data))
-         .catch(err => console.log(err));
-
-
-   }else if(!isEmpty(this.state.email) &&
-     !isEmpty(this.state.password) &&
-     !isEmpty(this.state.repassword) &&
-   this.state.password != this.state.repassword){
-     this.setState({errors: 'Passwords do not match'});
-       console.log("Sing up error password");
-   }else{
-     console.log("Sing up error");
-   }
- }
-
- handleVerif = e => {
-  //console.log("EMail: " + this.state.email + "Password: " + this.state.password);
-
-
-  if(!isEmpty(this.state.secret)){
-    this.setState({status_u: "loading"});
-      //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-      axios.get("http://127.0.0.1:4000/users?email="+this.state.email+"&secret="+this.state.secret+"&status=verif")
-        .then(res => this.otventa(res.data))
-        .catch(err => console.log(err));
-
-
-  }else{
-    console.log("Sing up error");
-  }
- }
- // testing(take) {
- //     return this.props.select2(take);
- // }
-    //console.log("Password: " + this.state.password);
-
-    verif = (classes) => {
-        return(
-          <div>
-
-            <GridContainer>
-              <GridItem xs={12} sm={12} md={12}>
-                <Card>
-                  <CardHeader color="primary">
-                    <h4 className={classes.cardTitleWhite}>Email verification to finish registration with Home Expense App</h4>
-                    <p className={classes.cardCategoryWhite}>Please confirm secret code</p>
-                  </CardHeader>
-                  <CardBody>
-                  {this.state.errors}
-                    <GridContainer>
-                      <GridItem xs={12} sm={12} md={5}>
-                        Your secret code: {this.state.server.secret}
-                      </GridItem>
-                    </GridContainer>
-                    <GridContainer>
-
-                      <GridItem xs={12} sm={12} md={5}>
-                        <CustomInput
-                          labelText="Secret Code"
-                          id="none"
-                          name="code"
-
-                          type="text"
-                          onChange={this.handleVerifChange}
-                          formControlProps={{
-                            fullWidth: true
-                          }}
-                          /*
-                          inputProps={{
-                            disabled: true
-                          }}
-                          */
-                        />
-                      </GridItem>
-
-                    </GridContainer>
-
-
-
-                  </CardBody>
-                  <CardFooter>
-                    <Button color="primary" onClick={() => this.handleVerif()}>Verif</Button>
-
-                  </CardFooter>
-
-                </Card>
-
-              </GridItem>
-
-            </GridContainer>
-          </div>
-        );
-
-    }
-    signin = (classes) => {
+    signin = (classes, tesing) => {
       return (
 
         <div>
@@ -272,28 +129,89 @@ handleEmailChange = e => {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell color="primary">Date</TableCell>
+
               <TableCell numeric>Category</TableCell>
-              <TableCell numeric>Expenses</TableCell>
+
               <TableCell numeric>Value, UAH</TableCell>
 
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.state.reports.map(row => {
+          {this.state.reports.map(row => {
+
+            if(row.p_cat == 0){
+              // var test = (<TableRow key={row._id}>
+              //   <TableCell component="th" scope="row">  {row.date_t}</TableCell>
+              //   <TableCell numeric>{row.namecat}</TableCell>
+              //   <TableCell numeric>{row.desc}</TableCell>
+              //   <TableCell numeric>{row.value}</TableCell>
+              // </TableRow>);
               return (
                 <TableRow key={row._id}>
-                  <TableCell component="th" scope="row">
 
-        {row.date_t}
+                  <TableCell numeric>{row.title}</TableCell>
 
-                  </TableCell>
-                  <TableCell numeric>{row.namecat}</TableCell>
-                  <TableCell numeric>{row.desc}</TableCell>
                   <TableCell numeric>{row.value}</TableCell>
                 </TableRow>
-              );
-            })}
+              )
+            }else{
+
+              return (
+                <TableRow key={row._id}>
+
+                  <TableCell numeric>--- {row.title}</TableCell>
+
+                  <TableCell numeric>{row.value}</TableCell>
+                </TableRow>
+              )
+              // if(this.state.rep_pod == ""){
+              // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpenses_pod&ex_id="+row._id)
+              //   .then(res => {
+              //     //this.setState({ reports: res.data});
+              //     this.setState({rep_pod: res.data})
+              //     console.log(res.data);
+              //
+              //
+              //     //start = 1;
+              //    //  this.props.update_cats_call();
+              //     //this.otventa(res.data);
+              //
+              //
+              //     //console.log("OK");
+              //   })
+              //   .catch(err => console.log(err));
+              //
+              //   }
+              //
+              //   return (
+              //     this.state.rep_pod.map(item => {
+              //       return(
+              //         <TableRow key={item._id}>
+              //
+              //           <TableCell numeric>{item.namecat}</TableCell>
+              //
+              //           <TableCell numeric>{item.value}</TableCell>
+              //         </TableRow>
+              //       )
+              //     }))
+
+              //   var test3 = "<TableCell numeric>{row.value}</TableCell>";
+              // var test = (<TableRow key={row._id}>
+              //   <TableCell component="th" scope="row">  {row.date_t}</TableCell>
+              //   <TableCell numeric>{row.namecat}</TableCell>
+              //   <TableCell numeric>{row.desc}</TableCell>
+              //   <TableCell numeric>{row.value}</TableCell>
+              //     <TableCell numeric> {test3}</TableCell>
+              // </TableRow>);
+
+
+
+
+
+            }
+
+
+          })}
           </TableBody>
         </Table>
 
@@ -309,46 +227,13 @@ handleEmailChange = e => {
       );
 
     }
-    loading = (classes) => {
-      return(
-        <div>
-
-          <GridContainer>
-            <GridItem xs={12} sm={12} md={12}>
-              <Card>
-                <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Plaese waiting...</h4>
-                  <p className={classes.cardCategoryWhite}>Sign in</p>
-                </CardHeader>
-                <CardBody>
-
-                      <div className={classes.root}>
-
-                            <LinearProgress />
-                              <br />
-                          </div>
-
-
-
-
-                </CardBody>
-
-
-              </Card>
-
-            </GridItem>
-
-          </GridContainer>
-        </div>
-      );
-    }
 
 
       getexpenses = () => {
         //console.log("send token ", sessionStorage.getItem("token"));
          //this.setState({status_u: "loading"});
            //  axios.get("http://http://127.0.0.1:4000/users?email="+this.state.email+"&p="+this.state.password)
-           axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpenses")
+           axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatall")
              .then(res => {
                this.setState({ reports: res.data});
 
@@ -385,6 +270,7 @@ handleEmailChange = e => {
               (this.state.status_u == "loading") ? this.loading(classes) :
               (this.state.status_u == "verif") ? this.verif(classes) :
               this.signin(classes);
+
 
   return (mode);
 }

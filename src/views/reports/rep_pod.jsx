@@ -22,6 +22,12 @@ import classNames from 'classnames';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 import axios from "axios";
 
 function Transition(props) {
@@ -103,9 +109,8 @@ class Podcat extends React.Component {
     //   .then(res =>  this.otventa(res.data))
     //   .catch(err => console.log(err));
         this.setState({ open: false });
-        this.setState({ [prop]: event.target.value });
+this.setState({ [prop]: event.target.value });
       this.setState({ selected_cat: event.target.value });
-        this.props.cat_up();
       //console.log("Selected CAT now ", event.target.value);
       //console.log("Selected CAT ", this.state.selected_cat);
     };
@@ -135,10 +140,9 @@ class Podcat extends React.Component {
 
                 this.setState({ open: false });
                 this.setState({ open2: false });
-                this.props.cat_up();
+              this.props.cat_up();
             //console.log("DELETE CAT ", this.state.id_cat);
             this.props.podcat_p();
-
             // this.setState({secret: e.target.value});
           };
 
@@ -171,29 +175,14 @@ class Podcat extends React.Component {
 
   render() {
     const { classes } = this.props;
-    let {options:{title, _id}} = this.props;
+    let {options:{namecat, _id, desc, value, date_t}} = this.props;
     return (
-
-<div>
-      <ListItem>
-          <ListItemText primary={title} />
-
-
-
-  <Button variant="contained" onClick={() => this.please_delete({_id})}>
-  <Icon color="primary">
-    clear
-  </Icon>
-
-</Button>
-
-        </ListItem>
-
-
-
-
-
-        </div>
+      <TableRow key={_id}>
+        <TableCell component="th" scope="row"> 123{date_t}</TableCell>
+        <TableCell numeric>{namecat}</TableCell>
+        <TableCell numeric>{desc}</TableCell>
+        <TableCell numeric>{value}</TableCell>
+      </TableRow>
 
     );
   }

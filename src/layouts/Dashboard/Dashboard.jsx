@@ -99,7 +99,7 @@ this.test();
     }
 
 
-  
+
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeFunction);

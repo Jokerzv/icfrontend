@@ -97,8 +97,8 @@ class Cat extends React.Component {
 
   listcats = data => {
 
-    //console.log("no ID LA", id);
-    if(data =! "" || data != true || data != false){
+    //console.log("no ID LA", data);
+    if(data =! "" || data != true){
     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp&catid="+data)
       .then(res =>  {
         //this.otvet_rages(res.data, data);

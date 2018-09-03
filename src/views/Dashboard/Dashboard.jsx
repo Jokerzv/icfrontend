@@ -130,6 +130,7 @@ class Dashboard extends React.Component {
     selected_cat: ' ',
     status_find_pocat: 1,
     desc: '',
+    p_cat: '',
     value: '',
     value_p: false,
     desc_p: false
@@ -168,7 +169,7 @@ class Dashboard extends React.Component {
         this.setState({ [prop]: event.target.value });
       this.setState({ selected_cat: event.target.value });
 
-      //console.log("Selected CAT now ", event.target.value);
+      console.log("Selected CAT now ", event.target.value);
 
       // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscataddp&selectedcatid="+event.target.value+"&catid="+this.props.options._id)
       //   .then(res =>  this.get_cats(res.data))
@@ -293,7 +294,7 @@ class Dashboard extends React.Component {
                             >
 
                               {this.state.pod_cats.map(option => (
-                                <MenuItem key={option.value} value={option.label}>
+                                <MenuItem key={option.value} value={option.value}>
                                   {option.label}
                                 </MenuItem>
                               ))}
