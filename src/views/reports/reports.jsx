@@ -203,18 +203,25 @@ class Auth extends React.Component {
                     //   )
                     // })
                   // };
+                  var sum2 = 0;
+                  {this.state.rep_pod.map(item => {
+                    sum2 += item.value;
 
+                  })}
+
+                  var sum = row.value + sum2;
                 return (
                     <TableBody>
                   <TableRow key={row._id}>
 
                      <TableCell numeric> {row.title}</TableCell>
 
-                     <TableCell numeric>{row.value}</TableCell>
+                     <TableCell numeric>{sum}</TableCell>
 
                      </TableRow>
 
                    {this.state.rep_pod.map(item => {
+                    
                      return(
                        <TableRow key={item._id}>
 
@@ -246,7 +253,7 @@ class Auth extends React.Component {
 
 
           })}
-          
+
         </Table>
 
                 </CardBody>
