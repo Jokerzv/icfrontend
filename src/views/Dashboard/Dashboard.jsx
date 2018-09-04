@@ -100,7 +100,7 @@ const styles = {
 };
 
 function validateValue(value) {
-  var pattern  = /^([0-9]*[.])?[0-9]+$/;
+  var pattern  = /^([0-9]*[,])?[0-9]+$/;
   return pattern .test(value);
 };
 
