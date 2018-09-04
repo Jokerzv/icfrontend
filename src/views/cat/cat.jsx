@@ -235,7 +235,7 @@ class Cat extends React.Component {
 
         this.setState({ pod_cats: res.data });
 
-       //console.log("Получил подкатегорияы", res);
+       //console.log("Получил подкатегорияы", res.data);
 
        if(res.data == ""){
          this.setState({status_find_pocat: 0});
