@@ -136,64 +136,98 @@ class Auth extends React.Component {
 
             </TableRow>
           </TableHead>
-          <TableBody>
+
           {this.state.reports.map(row => {
 
-            if(row.p_cat == 0){
+            if(row.p_cat_is == 0){
               // var test = (<TableRow key={row._id}>
               //   <TableCell component="th" scope="row">  {row.date_t}</TableCell>
               //   <TableCell numeric>{row.namecat}</TableCell>
               //   <TableCell numeric>{row.desc}</TableCell>
               //   <TableCell numeric>{row.value}</TableCell>
               // </TableRow>);
-              return (
+              return (  <TableBody>
                 <TableRow key={row._id}>
 
                   <TableCell numeric>{row.title}</TableCell>
 
                   <TableCell numeric>{row.value}</TableCell>
                 </TableRow>
+              </TableBody>
               )
-            }else{
+            }else if(row.p_cat_is == 1){
 
-              return (
-                <TableRow key={row._id}>
+              // return (
+              //   <TableRow key={row._id}>
+              //
+              //     <TableCell numeric>--- {row.title}</TableCell>
+              //
+              //     <TableCell numeric>{row.value}</TableCell>
+              //   </TableRow>
+              // )
 
-                  <TableCell numeric>--- {row.title}</TableCell>
+              if(this.state.rep_pod == ""){
+              axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpenses_pod&ex_id="+row._id)
+                .then(res => {
+                  //this.setState({ reports: res.data});
+                  this.setState({rep_pod: res.data})
+                  console.log(res.data);
 
-                  <TableCell numeric>{row.value}</TableCell>
-                </TableRow>
-              )
-              // if(this.state.rep_pod == ""){
-              // axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getexpenses_pod&ex_id="+row._id)
-              //   .then(res => {
-              //     //this.setState({ reports: res.data});
-              //     this.setState({rep_pod: res.data})
-              //     console.log(res.data);
-              //
-              //
-              //     //start = 1;
-              //    //  this.props.update_cats_call();
-              //     //this.otventa(res.data);
-              //
-              //
-              //     //console.log("OK");
-              //   })
-              //   .catch(err => console.log(err));
-              //
-              //   }
-              //
-              //   return (
-              //     this.state.rep_pod.map(item => {
-              //       return(
-              //         <TableRow key={item._id}>
-              //
-              //           <TableCell numeric>{item.namecat}</TableCell>
-              //
-              //           <TableCell numeric>{item.value}</TableCell>
-              //         </TableRow>
-              //       )
-              //     }))
+
+                  //start = 1;
+                 //  this.props.update_cats_call();
+                  //this.otventa(res.data);
+
+
+                  //console.log("OK");
+                })
+                .catch(err => console.log(err));
+
+                }
+                 var catogo = <TableRow key={row._id}>
+
+                    <TableCell numeric>--- {row.title}</TableCell>
+
+                    <TableCell numeric>{row.value}</TableCell>
+                  </TableRow>;
+
+                  // cat_po = () =>{
+                    // this.state.rep_pod.map(item => {
+                    //   return(
+                    //     <TableRow key={item._id}>
+                    //
+                    //       <TableCell numeric>--- {item.title}</TableCell>
+                    //
+                    //       <TableCell numeric>{item.value}</TableCell>
+                    //     </TableRow>
+                    //   )
+                    // })
+                  // };
+
+                return (
+                    <TableBody>
+                  <TableRow key={row._id}>
+
+                     <TableCell numeric> {row.title}</TableCell>
+
+                     <TableCell numeric>{row.value}</TableCell>
+
+                     </TableRow>
+
+                   {this.state.rep_pod.map(item => {
+                     return(
+                       <TableRow key={item._id}>
+
+                         <TableCell numeric>--- {item.title}</TableCell>
+
+                         <TableCell numeric>{item.value}</TableCell>
+                       </TableRow>
+                     )
+                   })}
+                 </TableBody>
+                )
+
+
 
               //   var test3 = "<TableCell numeric>{row.value}</TableCell>";
               // var test = (<TableRow key={row._id}>
@@ -212,7 +246,7 @@ class Auth extends React.Component {
 
 
           })}
-          </TableBody>
+          
         </Table>
 
                 </CardBody>

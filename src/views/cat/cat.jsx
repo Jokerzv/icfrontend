@@ -98,17 +98,17 @@ class Cat extends React.Component {
   listcats = data => {
 
     //console.log("no ID LA", data);
-    if(data =! "" || data != true){
+    //if(data =! "" || data != true){
     axios.get("http://127.0.0.1:4000/cat?token="+sessionStorage.getItem("token")+"&status=getscatselectetnotp&catid="+data)
       .then(res =>  {
         //this.otvet_rages(res.data, data);
-
+        //console.log("SSSS ", data);
         const new_massive =  res.data.filter((user) => {return user.value != data;});
         this.setState({ ranges: new_massive });
 
       })
       .catch(err => console.log(err));
-}
+//}
 
 
 
