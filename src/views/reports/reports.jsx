@@ -216,12 +216,12 @@ class Auth extends React.Component {
 
                      <TableCell numeric> {row.title}</TableCell>
 
-                     <TableCell numeric>{sum}</TableCell>
+                     <TableCell numeric>{row.value} (Всего: {sum})</TableCell>
 
                      </TableRow>
 
                    {this.state.rep_pod.map(item => {
-                    
+
                      return(
                        <TableRow key={item._id}>
 
